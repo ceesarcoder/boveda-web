@@ -1170,6 +1170,98 @@ button.lrow:active, .lrow.tap:active { background: var(--press); }
 @media (hover: hover) { .club-people:hover { background: var(--hover); } }
 
 /* =====================================================================
+   CATÁLOGO VIVO: portadas oficiales, búsqueda global y ficha de cada obra
+   (norma: SISTEMA_DE_DISENO.md · colores del ambiente, escala de letra,
+   múltiplos de 4, bordes de 12 y 16 px, 200 ms)
+   ===================================================================== */
+
+/* Portada oficial encima de la ilustración (si no carga, se queda la ilustración) */
+.cv-img { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; object-fit: cover; }
+.cv-img.fit-contain { object-fit: contain; background: var(--c1); }
+
+/* ---------------------------------------------------------------- búsqueda global */
+.sr-head { gap: 8px; }
+.sr-head .search { flex: 1; min-width: 0; margin: 0; }
+.sr-chips { margin: 0; }
+.sr-body { display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px; }
+.sr-results { display: flex; flex-direction: column; gap: 24px; }
+.sr-sec { display: flex; flex-direction: column; gap: 8px; }
+.sr-row { display: flex; align-items: center; gap: 4px; min-height: 64px; }
+.sr-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 4px; border-radius: 12px; text-align: left; color: var(--fg); transition: background-color .2s var(--ease); }
+.sr-main b { display: block; font-size: var(--t-15); font-weight: 700; }
+.sr-main .small { display: block; margin-top: 4px; }
+.sr-cat { flex-shrink: 0; width: 24px; height: 24px; display: grid; place-items: center; color: var(--muted); }
+.sr-cat svg { width: 16px; height: 16px; }
+.sr-have { flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; color: var(--accent-text); }
+.sr-person { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 4px; border-radius: 12px; text-align: left; color: var(--fg); transition: background-color .2s var(--ease); }
+.sr-person b { display: block; font-size: var(--t-15); font-weight: 700; }
+.sr-person .small { display: block; }
+.sr-cats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.sr-cat-tile { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); text-align: left; transition: background-color .2s var(--ease), transform .2s var(--ease); }
+.sr-cat-tile svg { width: 20px; height: 20px; color: var(--accent-text); flex-shrink: 0; }
+.sr-cat-tile b { font-size: var(--t-15); font-weight: 700; }
+.sr-status, .sr-note { margin: 0; }
+.sr-skel { pointer-events: none; gap: 12px; padding: 4px; }
+
+/* Cargando: barras que brillan (se apagan con "reducir movimiento") */
+.skel { display: block; border-radius: 999px; background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2)); background-size: 200% 100%; animation: skel 1.2s linear infinite; }
+.skel.ln { width: 100%; height: 12px; }
+.skel.ln.short { width: 60%; }
+.skel.sq { flex-shrink: 0; width: 48px; height: 48px; border-radius: 12px; }
+@keyframes skel { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+
+/* ---------------------------------------------------------------- ficha de la obra */
+.v-live { display: flex; flex-direction: column; gap: 16px; }
+.v-section { display: flex; flex-direction: column; gap: 8px; }
+.v-section a { color: var(--accent-text); font-weight: 700; }
+
+/* Calificaciones de varias fuentes */
+.rate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.rate-tile { display: flex; flex-direction: column; gap: 4px; min-height: 96px; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); text-decoration: none; transition: background-color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
+.v-section a.rate-tile { color: var(--fg); font-weight: 400; }
+.rate-tile.rt-boveda { border-color: var(--accent-line); box-shadow: var(--sh-1); }
+.rt-src { font-size: var(--t-12); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.rt-val { display: flex; align-items: baseline; gap: 4px; }
+.rt-val b { font-family: var(--f-display); font-size: var(--t-28); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.rt-val small { font-size: var(--t-13); font-weight: 500; color: var(--muted); }
+.rt-note { font-size: var(--t-12); font-weight: 500; color: var(--muted); }
+
+/* Sinopsis con "Leer más" */
+.syn { margin: 0; font-size: var(--t-15); line-height: 1.5; color: var(--fg); }
+.syn.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.v-section .syn-more { align-self: flex-start; min-height: 44px; font-weight: 700; color: var(--accent-text); }
+
+/* Ficha técnica (todas las obras) */
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.fact { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.fact dt { font-size: var(--t-12); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fact dd { margin: 0; font-size: var(--t-15); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.fact-wide { grid-column: 1 / -1; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+
+/* Plantilla de libros: tarjeta propia, renglón editorial en serif y rejilla que crece con el espacio */
+.book-sheet { container-type: inline-size; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-1); }
+.book-sheet .fact { background: var(--bg); }
+.bs-head { display: flex; flex-direction: column; gap: 4px; }
+.bs-lead { font-family: var(--f-serif); font-size: var(--t-17); font-weight: 700; line-height: 1.25; }
+.bs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+@container (min-width: 520px) { .facts-book { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Dónde verla, leerla, escucharla o comprarla */
+.where-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(144px, 1fr)); gap: 8px; }
+.v-section a.where-btn { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 12px 8px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); font-weight: 400; text-decoration: none; transition: background-color .2s var(--ease), transform .2s var(--ease); }
+.where-btn b { display: block; font-size: var(--t-15); font-weight: 700; }
+.where-btn .grow span { display: block; font-size: var(--t-12); font-weight: 500; color: var(--muted); }
+.where-btn svg { flex-shrink: 0; width: 18px; height: 18px; color: var(--muted); }
+
+@media (hover: hover) {
+  .sr-main:hover, .sr-person:hover { background: var(--hover); }
+  .sr-cat-tile:hover, .v-section a.rate-tile:hover, .v-section a.where-btn:hover { background: var(--surface-2); }
+}
+.sr-cat-tile:active, .v-section a.rate-tile:active, .v-section a.where-btn:active { transform: scale(.98); }
+
+/* =====================================================================
    ACCESIBILIDAD: alto contraste, movimiento reducido y modo daltonismo
    ===================================================================== */
 .hc { --muted: color-mix(in srgb, var(--fg) 88%, var(--bg)); --faint: color-mix(in srgb, var(--fg) 78%, var(--bg)); --line: color-mix(in srgb, var(--fg) 50%, var(--bg)); }
@@ -1862,7 +1954,7 @@ function cover(id, o = {}) {
     }
   }
   if (o.bare) inner = (inner.match(/<i class="sh[^"]*"><\/i>/g) || []).join("");
-  return `<div class="cv cv-${cat} L${L} ${col.dark ? "dk" : "lt"} ${o.fill ? "fill" : ""} ${o.bare ? "bare" : ""} ${o.cls || ""}" style="${style};${o.style || ""}" ${o.bare ? 'aria-hidden="true"' : `role="img" aria-label="${esc(altFor(id))}"`}>${inner}</div>`;
+  return `<div class="cv cv-${cat} L${L} ${col.dark ? "dk" : "lt"} ${o.fill ? "fill" : ""} ${o.bare ? "bare" : ""} ${o.cls || ""}" style="${style};${o.style || ""}" ${o.bare ? 'aria-hidden="true"' : `role="img" aria-label="${esc(altFor(id))}"`} data-cv="${esc(id)}">${inner}${coverImg(it)}</div>`;
 }
 // Miniatura cuadrada para listas (portada recortada)
 const thumb = (id, size = 44, r = 10) => `<span class="thumb" style="width:${size}px;height:${size}px;border-radius:${r}px">${cover(id, { fill: true, bare: size < 40 })}</span>`;
@@ -3502,7 +3594,8 @@ LAYERS.viewer = {
       <div class="page-head">${iconBtn("close", "back", "Volver")}<div class="title"><span class="chip static">${CAT_ICON[it.cat]}${c.one}</span></div>${iconBtn("share-item", "share", "Compartir obra", `data-id="${id}"`)}</div>
       <div class="page-body viewer-body">
         <div class="stage-box">${stageObject(id)}</div>
-        <div class="v-meta"><h2 class="v-title">${esc(it.title)}</h2><span class="muted">${esc(it.creator)} · ${it.year}</span></div>
+        <div class="v-meta"><h2 class="v-title">${esc(it.title)}</h2><span class="muted">${esc([it.creator, it.year].filter(Boolean).join(" · "))}</span></div>
+        <div class="v-live" id="v-info">${liveInfoHTML(id)}</div>
         ${other ? `<button class="who-has" data-act="react" data-id="${id}" data-user="${other}" type="button">${avatar(other, 38)}<span class="grow"><b>En la Bóveda de ${esc(USERS[other].name)}</b><span class="small muted">${e ? "También está en la tuya" : "Aún no está en la tuya"} · Toca para reaccionar</span></span>${ICON.chev.replace("<svg", '<svg class="chev"')}</button>` : ""}
         <section class="card col v-mine" style="gap:12px">
           ${e ? `<div class="between"><b>En tu Bóveda</b><button class="link-btn danger-text" data-act="remove" data-id="${id}" type="button">Quitar</button></div>
@@ -3518,12 +3611,14 @@ LAYERS.viewer = {
           <button class="act-tile" data-act="now-with" data-id="${id}" type="button">${icon("sparkle", 22)}<b>Compartir como Ahora</b><span>Visible 24 horas</span></button>
           <button class="act-tile" data-act="buy" data-id="${id}" type="button">${icon("gift", 22)}<b>Dónde conseguirlo</b><span>Tiendas y plataformas</span></button>
         </div>
+        ${liveWhereHTML(id)}
         <button class="who-has" data-act="noop-toast" data-msg="Aquí verás a quién más le gusta" type="button"><span class="stackav">${holders.slice(0, 4).map(u => avatar(u, 32)).join("")}</span><span class="grow"><b>En ${n} Bóvedas</b><span class="small muted">${holders.length ? holders.slice(0, 2).map(u => esc(USERS[u].name)).join(" y ") + (holders.length > 2 ? " y más" : "") + (holders.length === 1 ? " la tiene" : " la tienen") : "Sé de los primeros en guardarla"}</span></span></button>
-        <p class="xs muted center" style="margin:0">Datos y portada en la app real: ${esc(c.src)}. Esta portada es una ilustración del prototipo.</p>
+        <p class="xs muted center" style="margin:0" id="v-credits">${creditsLine(id)}</p>
       </div>
     </div>`;
   },
   after(el, props, entry, isRefresh) {
+    paintDetails(props.id, el);
     if (isRefresh) return;
     const o = $(".stage-box .obj", el);
     if (o) setTimeout(() => playObj(o), 420);
@@ -4654,15 +4749,19 @@ const beErr = (e, fallback) => {
 // ---------------------------------------------------------------- cargar lo tuyo
 async function beLoadCatalog() {
   if (Object.keys(BE.cat).length) return;
-  const { data, error } = await BE.sb.from("cultural_items").select("id, external_id").eq("source", "curado");
+  const { data, error } = await BE.sb.from("cultural_items").select("id, external_id, cover_url").eq("source", "curado");
   if (error) throw error;
-  data.forEach(r => { BE.cat[r.external_id] = r.id; BE.back[r.id] = r.external_id; });
+  data.forEach(r => {
+    BE.cat[r.external_id] = r.id; BE.back[r.id] = r.external_id;
+    const it = ITEMS[r.external_id];   // portada oficial ya verificada por alguien más (archivo 07)
+    if (it && r.cover_url && it.img === undefined) { it.img = r.cover_url; it.fit = "cover"; }
+  });
 }
 async function beHydrate() {
   await beLoadCatalog();
   const [{ data: p, error: e1 }, { data: v, error: e2 }, { data: f, error: e3 }] = await Promise.all([
     BE.sb.from("profiles").select("username, display_name, bio, theme, theme_custom, name_font, current_streak").eq("id", BE.uid).single(),
-    BE.sb.from("vault_items").select("item_id, status, favorite_rank, rating, created_at").eq("user_id", BE.uid),
+    BE.sb.from("vault_items").select("item_id, status, favorite_rank, rating, created_at, cultural_items(category, source, external_id, title, creator, release_year, cover_url)").eq("user_id", BE.uid),
     BE.sb.from("follows").select("following_id, profiles!follows_following_id_fkey(username)").eq("follower_id", BE.uid),
   ]);
   if (e1 || e2) throw e1 || e2;
@@ -4674,6 +4773,14 @@ async function beHydrate() {
   m.note = ""; m.prompts = []; m.moment = null; m.diary = []; m.premium = false; m.badges = new Set(["beta"]);
   m.streak = p.current_streak || 0; m.weeklyStreak = 0; m.history = Array(28).fill(0);
   m.week = { album: false, movie: false, book: false, game: false, tv: false };
+  // Obras que encontraste en la búsqueda (no son del catálogo inicial): se registran con su id de fuente
+  (v || []).forEach(r => {
+    const c = r.cultural_items;
+    if (!c || c.source === "curado" || BE.back[r.item_id]) return;
+    const id = addExternal({ cat: c.category, src: c.source, ext: c.external_id, title: c.title, creator: c.creator, year: c.release_year, img: c.cover_url });
+    if (c.cover_url && ITEMS[id].img === undefined) { ITEMS[id].img = c.cover_url; ITEMS[id].fit = "cover"; }
+    BE.cat[id] = r.item_id; BE.back[r.item_id] = id;
+  });
   m.vault = (v || []).filter(r => BE.back[r.item_id]).map(r => ({
     id: BE.back[r.item_id], status: r.status, fav: r.favorite_rank, rating: r.rating, added: Date.parse(r.created_at) || 0,
   }));
@@ -4709,6 +4816,17 @@ async function beSyncNow() {
     jobs.push(BE.sb.from("profiles").update(row).eq("id", BE.uid));
   }
   // Bóveda: agregadas o con estado/calificación nueva; quitadas; favoritas por tipo
+  // Obras nuevas de la búsqueda: primero entran al catálogo compartido (archivo 07)
+  for (const [id] of now.vault) {
+    const it = ITEMS[id];
+    if (BE.cat[id] || !it?.src) continue;
+    const { data: uuid, error } = await BE.sb.rpc("catalog_item", {
+      p_category: it.cat, p_source: it.src, p_external_id: it.ext, p_title: it.title,
+      p_creator: it.creator || null, p_year: Number.isInteger(+it.year) && +it.year ? +it.year : null, p_cover: it.img || null,
+    });
+    if (error) throw error;
+    BE.cat[id] = uuid; BE.back[uuid] = id;
+  }
   const upserts = [], removed = [], favCats = new Set();
   for (const [id, sig] of now.vault) {
     const old = prev.vault.get(id);
@@ -4819,6 +4937,666 @@ async function beRestore() {
     await beHydrate();
     S.screen = "app"; S.tab = "inicio"; applyTheme?.(); render();
   } catch (e) { console.error(e); await BE.sb.auth.signOut(); }
+}
+
+// ===== 12c_catalogo.js
+// =====================================================================
+// CATÁLOGO VIVO
+//  1. Búsqueda global: obras (y personas y clubes), con espera de 300 ms entre teclas,
+//     cancelación de búsquedas viejas, caché y filtro instantáneo por tipo de obra.
+//  2. Ficha de cada obra: sinopsis con "Leer más", calificaciones de varias fuentes y
+//     enlaces seguros para verla, leerla, escucharla o comprarla.
+//  3. Portadas oficiales verificadas (que existan, tamaño mínimo y proporción del
+//     tipo de obra) con la portada ilustrada como respaldo.
+//  4. Plantilla de ficha especial para libros (autor, editorial, páginas, ISBN…).
+//
+//  Fuentes sin clave: Open Library, MusicBrainz + Cover Art Archive, TVmaze, Wikipedia y
+//  Wikidata. Con la función "obras" de Supabase (las claves secretas viven allá):
+//  TMDB (películas), IGDB (videojuegos) y OMDb (IMDb y Rotten Tomatoes).
+//  En el prototipo (sin configuración) no se consulta nada de fuera.
+// =====================================================================
+const LIVE = !!(CFG.url && CFG.key);
+const FN = LIVE && !!CFG.obras;
+
+// ---------------------------------------------------------------- texto: normalizar y comparar
+const STOPW = new Set(["el", "la", "los", "las", "lo", "the", "a", "an", "of", "de", "del", "y", "and", "en", "un", "una"]);
+const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/&/g, " y ").replace(/[^a-z0-9]+/g, " ").trim();
+const toks = s => norm(s).split(" ").filter(w => w.length > 1 && !STOPW.has(w));
+// Parecido entre dos textos, de 0 a 1 (palabras en común; 1 si son iguales)
+function sim(a, b) {
+  const A = norm(a), B = norm(b);
+  if (!A || !B) return 0;
+  if (A === B) return 1;
+  if (A.includes(B) || B.includes(A)) return .5 + .5 * Math.min(A.length, B.length) / Math.max(A.length, B.length);
+  const x = new Set(toks(a)), y = new Set(toks(b));
+  if (!x.size || !y.size) return 0;
+  let n = 0; x.forEach(w => { if (y.has(w)) n++; });
+  return 2 * n / (x.size + y.size);
+}
+// ¿Este resultado es la misma obra? (título pesa más; autor y año confirman)
+function matchScore(it, r) {
+  const t = sim(it.title, r.title);
+  const c = it.creator && r.creator ? sim(it.creator, r.creator) : .5;
+  const y = it.year && r.year ? (Math.abs(+it.year - +r.year) <= 1 ? 1 : 0) : .5;
+  return .65 * t + .25 * c + .1 * y;
+}
+const yr = d => { const n = parseInt(String(d || "").slice(0, 4), 10); return n > 999 && n < 2101 ? n : null; };
+const https = u => (u ? String(u).replace(/^http:\/\//, "https://") : null);
+const stripHTML = h => { const d = document.createElement("div"); d.innerHTML = String(h || ""); return d.textContent.replace(/\s+/g, " ").trim(); };
+
+// ---------------------------------------------------------------- memoria del navegador (opcional)
+const store = {
+  get(k) { try { const v = JSON.parse(localStorage.getItem("bv1:" + k)); return v && v.e > Date.now() ? v.v : null; } catch (e) { return null; } },
+  set(k, v, days) { try { localStorage.setItem("bv1:" + k, JSON.stringify({ v, e: Date.now() + days * 864e5 })); } catch (e) { /* sin espacio o bloqueado */ } },
+};
+
+// ---------------------------------------------------------------- red: con turnos por sitio y tiempo límite
+const HOST_GAP = { "musicbrainz.org": 1100 };        // MusicBrainz pide máximo 1 consulta por segundo
+const hostNext = {};
+let inFlight = 0;
+const waiters = [];
+const slot = () => (inFlight < 5 ? (inFlight++, Promise.resolve()) : new Promise(r => waiters.push(r)));
+const release = () => { const w = waiters.shift(); if (w) w(); else inFlight--; };
+async function getJSON(url, { signal, ms = 10000 } = {}) {
+  const host = new URL(url).host, gap = HOST_GAP[host] || 0;
+  if (gap) {
+    const now = Date.now(), at = Math.max(now, hostNext[host] || 0);
+    hostNext[host] = at + gap;
+    if (at > now) await new Promise(r => setTimeout(r, at - now));
+  }
+  if (signal?.aborted) throw new DOMException("cancelado", "AbortError");
+  await slot();
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  const stop = () => ctl.abort();
+  signal?.addEventListener("abort", stop);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { Accept: "application/json" }, referrerPolicy: "no-referrer" });
+    if (!r.ok) throw new Error(`${host} respondió ${r.status}`);
+    return await r.json();
+  } catch (e) {
+    if (signal?.aborted) throw new DOMException("cancelado", "AbortError");
+    throw e;
+  } finally { clearTimeout(t); signal?.removeEventListener("abort", stop); release(); }
+}
+// Función "obras" en Supabase (TMDB, IGDB y OMDb con claves secretas). Sin ella, devuelve null.
+async function callObras(body, signal) {
+  if (!FN) return null;
+  try {
+    const tok = BE.real ? (await BE.sb.auth.getSession())?.data?.session?.access_token : null;
+    const r = await fetch(CFG.url + "/functions/v1/obras", {
+      method: "POST", signal,
+      headers: { "Content-Type": "application/json", apikey: CFG.key, Authorization: "Bearer " + (tok || CFG.key) },
+      body: JSON.stringify(body),
+    });
+    return r.ok ? await r.json() : null;
+  } catch (e) { if (e.name === "AbortError") throw e; return null; }
+}
+
+// ---------------------------------------------------------------- obras de fuera del catálogo inicial
+// Cada obra encontrada vive en ITEMS como "x:<fuente>:<id>", igual que las del catálogo,
+// así todas las pantallas (Bóveda, favoritas, perfil…) la muestran sin cambios.
+const xid = (src, ext) => `x:${src}:${ext}`;
+function addExternal(r) {
+  const id = xid(r.src, r.ext);
+  if (!ITEMS[id]) ITEMS[id] = { id, cat: r.cat, title: String(r.title || "Sin título"), creator: String(r.creator || ""), year: r.year || "", src: r.src, ext: String(r.ext), imgCand: r.img || null, extra: r.extra || {} };
+  else if (!ITEMS[id].imgCand && r.img) ITEMS[id].imgCand = r.img;
+  return id;
+}
+const luc = t => String(t).replace(/([+\-!(){}[\]^"~*?:\\/]|&&|\|\|)/g, "\\$1");
+const OL_FIELDS = "key,title,author_name,first_publish_year,cover_i,ratings_average,ratings_count";
+const olRow = x => ({ cat: "book", src: "openlibrary", ext: x.key, title: x.title, creator: x.author_name?.[0], year: x.first_publish_year,
+  img: x.cover_i ? `https://covers.openlibrary.org/b/id/${x.cover_i}-L.jpg?default=false` : null });
+const mbRow = x => ({ cat: "album", src: "musicbrainz", ext: x.id, title: x.title,
+  creator: (x["artist-credit"] || []).map(a => (a.name || a.artist?.name || "") + (a.joinphrase || "")).join("").trim(),
+  year: yr(x["first-release-date"]), img: `https://coverartarchive.org/release-group/${x.id}/front-500` });
+const tvRow = s => ({ cat: "tv", src: "tvmaze", ext: String(s.id), title: s.name, creator: s.network?.name || s.webChannel?.name || "",
+  year: yr(s.premiered), img: https(s.image?.original || s.image?.medium) });
+
+// Fuentes por tipo de obra: buscar (lista) y encontrar una obra concreta (la mejor coincidencia)
+const SRC = {
+  book: {
+    name: "Open Library",
+    async search(q, signal) {
+      const d = await getJSON(`https://openlibrary.org/search.json?limit=12&fields=${OL_FIELDS}&q=${encodeURIComponent(q)}`, { signal });
+      return (d.docs || []).map(olRow);
+    },
+    async find(it) {
+      const d = await getJSON(`https://openlibrary.org/search.json?limit=6&fields=${OL_FIELDS}&title=${encodeURIComponent(it.title)}&author=${encodeURIComponent(it.creator || "")}`);
+      return (d.docs || []).map(olRow);
+    },
+  },
+  album: {
+    name: "MusicBrainz",
+    async search(q, signal) {
+      const e = luc(q);
+      const d = await getJSON(`https://musicbrainz.org/ws/2/release-group/?fmt=json&limit=10&query=${encodeURIComponent(`(releasegroup:(${e}) OR artist:(${e})) AND primarytype:album`)}`, { signal });
+      return (d["release-groups"] || []).map(mbRow);
+    },
+    async find(it) {
+      const q = `releasegroup:"${luc(it.title)}"` + (it.creator ? ` AND artist:"${luc(it.creator)}"` : "");
+      const d = await getJSON(`https://musicbrainz.org/ws/2/release-group/?fmt=json&limit=5&query=${encodeURIComponent(q)}`);
+      return (d["release-groups"] || []).map(mbRow);
+    },
+  },
+  tv: {
+    name: "TVmaze",
+    async search(q, signal) {
+      const d = await getJSON(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(q)}`, { signal });
+      return (d || []).slice(0, 10).map(x => tvRow(x.show));
+    },
+    async find(it) {
+      const d = await getJSON(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(it.title)}`);
+      return (d || []).slice(0, 5).map(x => tvRow(x.show));
+    },
+  },
+  movie: {
+    name: "TMDB", fn: true,
+    async search(q, signal) { return (await callObras({ op: "search", cat: "movie", q }, signal))?.results || []; },
+    async find(it) { return (await callObras({ op: "search", cat: "movie", q: it.title, year: it.year }))?.results || []; },
+  },
+  game: {
+    name: "IGDB", fn: true,
+    async search(q, signal) { return (await callObras({ op: "search", cat: "game", q }, signal))?.results || []; },
+    async find(it) { return (await callObras({ op: "search", cat: "game", q: it.title }))?.results || []; },
+  },
+};
+const srcReady = cat => LIVE && (!SRC[cat].fn || FN);
+
+// Para obras del catálogo inicial: su ficha en la fuente oficial (se recuerda 30 días)
+const REF = new Map();
+async function refOf(it) {
+  if (it.src) return { src: it.src, ext: it.ext, img: it.imgCand };
+  if (REF.has(it.id)) return REF.get(it.id);
+  const saved = store.get("ref:" + it.id);
+  if (saved !== null) { REF.set(it.id, saved || null); return saved || null; }
+  let best = null;
+  if (srcReady(it.cat)) {
+    try {
+      const list = await SRC[it.cat].find(it);
+      const top = list.map(r => [r, matchScore(it, r)]).sort((a, b) => b[1] - a[1])[0];
+      if (top && top[1] >= .62) best = { src: top[0].src, ext: top[0].ext, img: top[0].img };
+    } catch (e) { return null; }                     // sin red: se intenta otra vez después
+  }
+  REF.set(it.id, best);
+  store.set("ref:" + it.id, best || "", best ? 30 : 3);
+  return best;
+}
+
+// ---------------------------------------------------------------- portadas verificadas
+// Proporción esperada por tipo y tolerancia: si no cuadra, la portada se muestra completa
+// (contain) en vez de recortarla.
+const RATIO = { album: [1, .12], movie: [2 / 3, .14], tv: [2 / 3, .2], book: [2 / 3, .25], game: [3 / 4, .2] };
+function probe(url, ms = 9000) {
+  return new Promise(res => {
+    const im = new Image();
+    im.referrerPolicy = "no-referrer";
+    const t = setTimeout(() => { im.src = ""; res(null); }, ms);
+    im.onload = () => { clearTimeout(t); res({ w: im.naturalWidth, h: im.naturalHeight }); };
+    im.onerror = () => { clearTimeout(t); res(null); };
+    im.src = url;
+  });
+}
+async function verifyCover(it, url) {
+  const m = await probe(url);
+  if (!m || m.w < 150 || m.h < 150) return null;      // no existe o es demasiado chica
+  const [target, tol] = RATIO[it.cat], r = m.w / m.h;
+  return { u: url, f: Math.abs(r - target) / target <= tol ? "cover" : "contain" };
+}
+const coverImg = it => (it.img ? `<img class="cv-img${it.fit === "contain" ? " fit-contain" : ""}" src="${esc(it.img)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : "");
+function paintCover(id) {
+  const it = ITEMS[id];
+  if (!it?.img) return;
+  document.querySelectorAll(`.cv[data-cv="${CSS.escape(id)}"]`).forEach(el => { if (!el.querySelector(":scope > .cv-img")) el.insertAdjacentHTML("beforeend", coverImg(it)); });
+}
+const COV_BUSY = new Set(), COV_SAVED = new Set();
+async function resolveCover(id) {
+  const it = ITEMS[id];
+  if (!LIVE || !it || it.img !== undefined || COV_BUSY.has(id)) return;
+  const c = store.get("cv:" + id);
+  if (c) { it.img = c.u; it.fit = c.f; paintCover(id); return; }
+  COV_BUSY.add(id);
+  try {
+    const urls = [];
+    if (it.imgCand) urls.push(it.imgCand);
+    else { const ref = await refOf(it); if (ref?.img) urls.push(ref.img); }
+    let ok = null;
+    for (const u of urls) { ok = await verifyCover(it, u); if (ok) break; }
+    it.img = ok ? ok.u : ""; it.fit = ok ? ok.f : "";
+    store.set("cv:" + id, { u: it.img, f: it.fit }, ok ? 30 : 3);
+    if (ok) { paintCover(id); saveCover(id, ok.u); }
+  } finally { COV_BUSY.delete(id); }
+}
+// La primera portada verificada de una obra queda guardada para todos (archivo 07)
+function saveCover(id, url) {
+  if (!BE.real || COV_SAVED.has(id) || !BE.cat[id]) return;
+  COV_SAVED.add(id);
+  BE.sb.rpc("set_item_cover", { p_item: BE.cat[id], p_url: url }).then(() => {}, () => {});
+}
+// Las portadas se buscan cuando aparecen en pantalla (y un poco antes)
+if (LIVE && "IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); resolveCover(e.target.dataset.cv); } }), { rootMargin: "240px" });
+  let queued = false;
+  const scan = () => {
+    queued = false;
+    document.querySelectorAll(".cv[data-cv]:not([data-seen])").forEach(el => {
+      el.dataset.seen = "1";
+      const it = ITEMS[el.dataset.cv];
+      if (it?.img) { if (!el.querySelector(":scope > .cv-img")) el.insertAdjacentHTML("beforeend", coverImg(it)); }
+      else if (it && it.img === undefined) io.observe(el);
+    });
+  };
+  new MutationObserver(() => { if (!queued) { queued = true; requestAnimationFrame(scan); } }).observe(document.body, { childList: true, subtree: true });
+}
+
+// ---------------------------------------------------------------- 1. BÚSQUEDA GLOBAL
+let IDX = { n: -1, rows: [] };
+function index() {
+  const ids = Object.keys(ITEMS);
+  if (ids.length !== IDX.n) {
+    IDX = { n: ids.length, rows: ids.map(id => { const it = ITEMS[id], c = CAT[it.cat]; return { id, t: norm(it.title), c: norm(it.creator), k: ` ${norm(`${c.name} ${c.plural} ${c.one}`)} `, y: String(it.year || "") }; }) };
+  }
+  return IDX.rows;
+}
+function scoreRow(r, qn, qt) {
+  let s = 0;
+  if (r.t === qn) s = 100; else if (r.t.startsWith(qn)) s = 86; else if (r.t.includes(qn)) s = 72;
+  if (r.c && (r.c === qn || r.c.startsWith(qn))) s = Math.max(s, 66); else if (r.c.includes(qn)) s = Math.max(s, 56);
+  if (!s && qt.length > 1 && qt.every(w => r.t.includes(w) || r.c.includes(w))) s = 50;
+  if (!s && r.k.includes(` ${qn} `)) s = 30;          // "libros", "cine", "series"…
+  if (!s && r.y === qn) s = 24;                         // un año: "1999"
+  return s;
+}
+function searchLocal(q, cat = "all") {
+  const qn = norm(q);
+  if (!qn) return [];
+  const qt = qn.split(" "), mine = new Set(vaultOf(S.me.username).map(v => v.id));
+  return index().filter(r => cat === "all" || ITEMS[r.id].cat === cat)
+    .map(r => [r.id, scoreRow(r, qn, qt) + (mine.has(r.id) ? 6 : 0)])
+    .filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+}
+const SR = { gen: 0, ctl: null, timer: 0, cache: new Map(), pending: new Set(), failed: new Set() };
+const CATS_ALL = ["book", "album", "tv", "movie", "game"];
+const catsOf = cat => (cat && cat !== "all" ? [cat] : CATS_ALL);
+// Resultados de fuera ya cargados para esta búsqueda, sin los que repiten una obra del catálogo
+function remoteIds(q, cat) {
+  const key = norm(q), out = [];
+  catsOf(cat).forEach(c => (SR.cache.get(c + "|" + key) || []).forEach(id => { if (!out.includes(id)) out.push(id); }));
+  const local = searchLocal(q, cat).filter(id => !ITEMS[id].src);
+  return out.filter(id => !local.some(l => ITEMS[l].cat === ITEMS[id].cat && matchScore(ITEMS[l], ITEMS[id]) >= .86));
+}
+function mergedIds(q, cat) {
+  const loc = searchLocal(q, cat);
+  return [...loc, ...remoteIds(q, cat).filter(id => !loc.includes(id))];
+}
+// Busca afuera 300 ms después de la última tecla; cancela lo anterior; guarda en caché
+function runRemote(q, cat) {
+  q = (q || "").trim();
+  clearTimeout(SR.timer);
+  if (!LIVE || q.length < 2) return;
+  SR.timer = setTimeout(() => {
+    SR.ctl?.abort();
+    const ctl = SR.ctl = new AbortController(), gen = ++SR.gen, key = norm(q);
+    SR.pending.clear();
+    catsOf(cat).forEach(c => {
+      const ck = c + "|" + key;
+      if (SR.cache.has(ck) || !srcReady(c)) return;
+      SR.pending.add(ck);
+      SRC[c].search(q, ctl.signal)
+        .then(list => { SR.cache.set(ck, (list || []).map(addExternal)); SR.failed.delete(c); })
+        .catch(e => { if (e.name !== "AbortError") { SR.cache.set(ck, []); SR.failed.add(c); } })
+        .finally(() => {
+          SR.pending.delete(ck);
+          if (SR.cache.size > 60) SR.cache.delete(SR.cache.keys().next().value);
+          if (gen === SR.gen) repaintSearch();
+        });
+    });
+    repaintSearch();
+  }, 300);
+}
+function repaintSearch() {
+  const e = STACK.slice().reverse().find(x => x.type === "search");
+  const box = e && $("#sr-results", e.el);
+  if (box) box.innerHTML = searchResultsHTML(e.props);
+  const atv = STACK.slice().reverse().find(x => x.type === "add-to-vault");
+  const ab = atv && $("#atv-results", atv.el);
+  if (ab) ab.innerHTML = pickRows(catalogSearch(atv.props.cat || "all", atv.props.q || ""), "obj-open");
+}
+// Las demás búsquedas de la app (Agregar a tu Bóveda) también suman resultados de fuera
+const _catalogSearch = catalogSearch;
+catalogSearch = function (cat, q) {
+  const base = _catalogSearch(cat, q);
+  if (!LIVE || !(q || "").trim()) return base;
+  return [...base, ...remoteIds(q, cat).filter(id => !base.includes(id))];
+};
+
+const RECENT_KEY = "recent-q";
+const recent = () => store.get(RECENT_KEY) || [];
+function rememberQuery(q) {
+  q = (q || "").trim();
+  if (q.length < 2) return;
+  store.set(RECENT_KEY, [q, ...recent().filter(x => norm(x) !== norm(q))].slice(0, 8), 90);
+}
+function srRow(id) {
+  const it = ITEMS[id], mine = vEntry(S.me.username, id);
+  const meta = [it.creator, it.year].filter(Boolean).join(" · ");
+  return `<div class="sr-row">
+    <button class="sr-main" data-act="obj-open" data-id="${esc(id)}" type="button">${thumb(id, 48, 12)}<span class="grow"><b class="ellipsis">${esc(it.title)}</b><span class="small muted ellipsis">${esc(meta || CAT[it.cat].one)}</span></span><span class="sr-cat" aria-label="${CAT[it.cat].one}">${CAT_ICON[it.cat]}</span></button>
+    ${mine ? `<span class="sr-have" role="img" aria-label="Ya está en tu Bóveda">${icon("check", 18)}</span>` : iconBtn("sr-save", "bookmark", `Guardar ${it.title} como pendiente`, `data-id="${esc(id)}"`)}
+  </div>`;
+}
+const srSkeleton = n => Array.from({ length: n }, () => `<div class="sr-row sr-skel" aria-hidden="true"><span class="skel sq"></span><span class="grow col" style="gap:8px"><span class="skel ln"></span><span class="skel ln short"></span></span></div>`).join("");
+function searchResultsHTML(p) {
+  const q = (p.q || "").trim(), cat = p.cat || "all";
+  if (!q) {
+    const r = recent();
+    return `${r.length ? `<section class="sr-sec"><div class="between"><span class="eyebrow">Búsquedas recientes</span><button class="link-btn small" data-act="sr-clear" type="button">Borrar</button></div><div class="chips">${r.map(x => `<button class="chip" data-act="sr-use" data-q="${esc(x)}" type="button">${ICON.clock}${esc(x)}</button>`).join("")}</div></section>` : ""}
+      <section class="sr-sec"><span class="eyebrow">Explora por tipo</span><div class="sr-cats">${CATS.map(c => `<button class="sr-cat-tile" data-act="sr-cat" data-cat="${c.id}" type="button">${CAT_ICON[c.id]}<b>${c.plural}</b></button>`).join("")}</div></section>
+      <p class="xs muted center sr-note">${LIVE ? "Busca por título, autor, artista o tipo de obra." : "En el prototipo se busca en el catálogo de ejemplo. En la app publicada también en Open Library, MusicBrainz, TVmaze, TMDB e IGDB."}</p>`;
+  }
+  const works = mergedIds(q, cat).slice(0, 40);
+  const pend = [...SR.pending].filter(k => k.endsWith("|" + norm(q)) && catsOf(cat).includes(k.split("|")[0])).map(k => SRC[k.split("|")[0]].name);
+  const qn = norm(q);
+  const people = cat === "all" && !BE.real ? Object.keys(USERS).filter(u => norm(u).includes(qn) || norm(USERS[u].name).includes(qn)).slice(0, 4) : [];
+  const clubs = cat === "all" && !BE.real ? CLUBS.filter(c => norm(c.name).includes(qn)).slice(0, 3) : [];
+  const off = LIVE ? catsOf(cat).filter(c => !srcReady(c)).map(c => CAT[c].plural.toLowerCase()) : [];
+  return `${people.length ? `<section class="sr-sec"><span class="eyebrow">Personas</span>${people.map(u => `<button class="sr-person" data-act="user" data-id="${u}" type="button">${avatar(u, 40)}<span class="grow"><b>${esc(USERS[u].name)}</b><span class="small muted">@${esc(u)}</span></span></button>`).join("")}</section>` : ""}
+    <section class="sr-sec" aria-busy="${pend.length > 0}">
+      <div class="between"><span class="eyebrow">${cat === "all" ? "Obras" : CAT[cat].plural}</span>${works.length ? `<span class="xs muted">${plural(works.length, "resultado", "resultados")}</span>` : ""}</div>
+      ${works.map(srRow).join("")}
+      ${pend.length ? `${works.length ? "" : srSkeleton(3)}<p class="xs muted sr-status" role="status">Buscando en ${esc(pend.join(", "))}…</p>` : ""}
+      ${!works.length && !pend.length ? `<div class="empty"><span class="ico">${ICON.search}</span><b>Sin resultados para “${esc(q)}”</b><span>Prueba con el título original o el nombre del autor.</span></div>` : ""}
+      ${[...SR.failed].filter(c => catsOf(cat).includes(c)).length ? `<p class="xs muted">Una de las fuentes no respondió; se reintenta en tu siguiente búsqueda.</p>` : ""}
+    </section>
+    ${clubs.length ? `<section class="sr-sec"><span class="eyebrow">Clubes</span>${clubs.map(clubRow).join("")}</section>` : ""}
+    ${off.length ? `<p class="xs muted center sr-note">Pronto también buscarás ${esc(off.join(" y "))} en vivo.</p>` : ""}`;
+}
+LAYERS.search = {
+  kind: "page",
+  build(p) {
+    const cat = p.cat || "all";
+    return `<div class="scroll page-scroll" data-scroll="search">
+      <div class="page-head sr-head">${iconBtn("close", "back", "Volver")}<label class="search grow">${ICON.search}<input class="input" id="sr-input" type="search" placeholder="Obras, autores, personas o clubes" value="${esc(p.q || "")}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Buscar en Bóveda" autofocus></label></div>
+      <div class="page-body sr-body">
+        <div class="chips sr-chips" role="group" aria-label="Tipo de obra">${[["all", "Todo"], ...CATS.map(c => [c.id, c.name])].map(([v, l]) => chipBtn("sr-cat", l, cat === v, `data-cat="${v}"`)).join("")}</div>
+        <div class="sr-results" id="sr-results" aria-live="polite">${searchResultsHTML(p)}</div>
+      </div>
+    </div>`;
+  },
+  after(el, p) { if (p.q) runRemote(p.q, p.cat); },
+  onClose(e) { rememberQuery(e.props.q); },
+};
+document.addEventListener("input", ev => {
+  const t = ev.target;
+  if (t.id === "sr-input") {
+    const e = topLayer();
+    if (!e || e.type !== "search") return;
+    e.props.q = t.value;
+    $("#sr-results", e.el).innerHTML = searchResultsHTML(e.props);   // lo que ya está: al instante
+    runRemote(t.value, e.props.cat);                                  // lo de fuera: con espera
+  } else if (t.id === "atv-search") {
+    const e = topLayer();
+    if (e?.type === "add-to-vault") runRemote(t.value, e.props.cat || "all");
+  }
+});
+document.addEventListener("keydown", ev => { if (ev.target.id === "sr-input" && ev.key === "Enter") { rememberQuery(ev.target.value); ev.target.blur(); } });
+// La caja de búsqueda de Descubrir abre la búsqueda global
+document.addEventListener("focusin", ev => {
+  if (ev.target.id !== "disc-search") return;
+  ev.target.blur();
+  openLayer("search", { q: S.discQ || "", cat: "all" });
+});
+Object.assign(ACT, {
+  search(el) { openLayer("search", { q: el?.dataset?.q || "", cat: el?.dataset?.cat || "all" }); },
+  "sr-cat"(el) {
+    const e = topLayer(); if (e?.type !== "search") return;
+    e.props.cat = el.dataset.cat;
+    $$(".sr-chips .chip", e.el).forEach(c => { const on = c.dataset.cat === e.props.cat; c.classList.toggle("on", on); c.setAttribute("aria-pressed", String(on)); });
+    $("#sr-results", e.el).innerHTML = searchResultsHTML(e.props);   // filtro instantáneo
+    runRemote(e.props.q, e.props.cat);
+  },
+  "sr-use"(el) { const e = topLayer(); e.props.q = el.dataset.q; refreshLayer(e); const i = $("#sr-input", e.el); i?.focus(); runRemote(e.props.q, e.props.cat); },
+  "sr-clear"() { store.set(RECENT_KEY, [], 1); repaintSearch(); },
+  "sr-save"(el) {
+    const id = el.dataset.id;
+    vaultAdd(id, "wishlist"); registerActivity?.();
+    rememberQuery(topLayer()?.props?.q);
+    repaintSearch();
+    toast(`“${ITEMS[id].title}” quedó como pendiente en tu Bóveda`, "🔖");
+  },
+  buy() { document.getElementById("v-where")?.scrollIntoView({ behavior: motionOff() ? "auto" : "smooth", block: "start" }); },
+  "syn-toggle"(el) {
+    const p = el.previousElementSibling, open = el.getAttribute("aria-expanded") !== "true";
+    p.classList.toggle("open", open); el.setAttribute("aria-expanded", String(open)); el.textContent = open ? "Leer menos" : "Leer más";
+  },
+});
+if (window.__bv) window.__bv.addExternal = r => addExternal(r);
+
+// ---------------------------------------------------------------- 2 y 4. FICHA DE LA OBRA
+const DET = new Map();
+const LANGS = { spa: "Español", eng: "Inglés", fre: "Francés", ger: "Alemán", ita: "Italiano", por: "Portugués", jpn: "Japonés", rus: "Ruso", cat: "Catalán", chi: "Chino", kor: "Coreano" };
+const KW = { movie: ["pelicula", "film"], tv: ["serie", "television", "programa"], album: ["album", "disco", "estudio"], book: ["novela", "libro", "obra", "cuento", "ensayo", "poema"], game: ["videojuego", "juego"] };
+async function wikiES(it, title) {
+  const tryTitle = async t => {
+    const s = await getJSON(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t.replace(/ /g, "_"))}`);
+    if (s.type === "disambiguation" || !s.extract) return null;
+    const txt = norm(`${s.description || ""} ${s.extract}`);
+    const okCat = KW[it.cat].some(k => txt.includes(k));
+    const okWho = !it.creator || toks(it.creator).some(w => txt.includes(w));
+    return okCat && okWho ? { text: s.extract, url: s.content_urls?.desktop?.page, qid: s.wikibase_item } : null;
+  };
+  if (title) return tryTitle(title).catch(() => null);
+  const d = await getJSON(`https://es.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=3&srsearch=${encodeURIComponent(`${it.title} ${it.creator || ""}`)}`);
+  for (const h of d.query?.search || []) {
+    if (sim(h.title.replace(/\s*\(.*\)$/, ""), it.title) < .7) continue;
+    const r = await tryTitle(h.title).catch(() => null);
+    if (r) return r;
+  }
+  return null;
+}
+// Wikidata: identificador de IMDb y calificaciones publicadas (Rotten Tomatoes, Metacritic)
+async function wikidata(qid) {
+  const d = await getJSON(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=claims|sitelinks&ids=${encodeURIComponent(qid)}`);
+  const e = d.entities?.[qid];
+  if (!e) return null;
+  const val = p => e.claims?.[p]?.[0]?.mainsnak?.datavalue?.value;
+  const scores = {};
+  (e.claims?.P444 || []).forEach(c => {
+    const v = c.mainsnak?.datavalue?.value, by = c.qualifiers?.P447?.[0]?.datavalue?.value?.id;
+    const when = c.qualifiers?.P585?.[0]?.datavalue?.value?.time || "";
+    const k = { Q105584: "rt", Q37312: "imdb", Q150248: "mc" }[by];
+    if (!k || typeof v !== "string") return;
+    if (k === "rt" && !/%$/.test(v)) return;
+    if (!scores[k] || when > scores[k].when) scores[k] = { v, when: when.slice(1, 5) };
+  });
+  return { imdb: typeof val("P345") === "string" ? val("P345") : null, scores, eswiki: e.sitelinks?.eswiki?.title, enwiki: e.sitelinks?.enwiki?.title };
+}
+const DETAIL = {
+  async book(it) {
+    const ref = await refOf(it);
+    if (!ref) return {};
+    const key = ref.ext;
+    const [w, eds, rt] = await Promise.all([
+      getJSON(`https://openlibrary.org${key}.json`),
+      getJSON(`https://openlibrary.org${key}/editions.json?limit=50`).catch(() => ({ entries: [] })),
+      getJSON(`https://openlibrary.org${key}/ratings.json`).catch(() => null),
+    ]);
+    const desc = typeof w.description === "string" ? w.description : w.description?.value;
+    const E = eds.entries || [];
+    // Edición de referencia: en español, con ISBN, páginas y editorial (la más completa)
+    const sc = e => ((e.languages || []).some(l => l.key === "/languages/spa") ? 8 : 0) + (e.isbn_13 || e.isbn_10 ? 4 : 0) + (e.number_of_pages ? 2 : 0) + ((e.publishers || []).length ? 1 : 0);
+    const ed = E.slice().sort((a, b) => sc(b) - sc(a))[0];
+    const lk = ed?.languages?.[0]?.key?.split("/").pop();
+    return {
+      synopsis: desc ? desc.replace(/\r/g, "").replace(/\(\[source\].*$/s, "").replace(/-{3,}[\s\S]*$/, "").trim() : null,
+      synSrc: { name: "Open Library", url: `https://openlibrary.org${key}` },
+      book: {
+        author: it.creator, publisher: ed?.publishers?.[0], pages: ed?.number_of_pages, isbn: ed?.isbn_13?.[0] || ed?.isbn_10?.[0],
+        lang: LANGS[lk] || null, editionYear: yr(ed?.publish_date), firstYear: it.year || yr(w.first_publish_date),
+        editions: eds.size || E.length || null, subjects: (w.subjects || []).filter(s => s.length < 28).slice(0, 5),
+      },
+      extra: rt?.summary?.count ? [{ src: "Open Library", value: (+rt.summary.average).toFixed(1), scale: "/5", count: rt.summary.count, url: `https://openlibrary.org${key}` }] : [],
+      source: "Open Library",
+    };
+  },
+  async album(it) {
+    const ref = await refOf(it);
+    if (!ref) return {};
+    const g = await getJSON(`https://musicbrainz.org/ws/2/release-group/${encodeURIComponent(ref.ext)}?inc=artist-credits+url-rels+genres&fmt=json`);
+    const qid = (g.relations || []).find(r => r.type === "wikidata")?.url?.resource?.split("/").pop();
+    const types = [g["primary-type"], ...(g["secondary-types"] || [])].filter(Boolean).join(" · ");
+    return {
+      qid,
+      facts: [["Artista", it.creator], ["Lanzamiento", g["first-release-date"]], ["Tipo", { Album: "Álbum", EP: "EP", Single: "Sencillo" }[g["primary-type"]] || types], ["Géneros", (g.genres || []).sort((a, b) => b.count - a.count).slice(0, 3).map(x => x.name).join(", ")]],
+      synSrc: { name: "MusicBrainz", url: `https://musicbrainz.org/release-group/${ref.ext}` },
+      source: "MusicBrainz · Cover Art Archive",
+    };
+  },
+  async tv(it) {
+    const ref = await refOf(it);
+    if (!ref) return {};
+    const s = await getJSON(`https://api.tvmaze.com/shows/${encodeURIComponent(ref.ext)}?embed=seasons`);
+    return {
+      synopsis: stripHTML(s.summary) || null, synSrc: { name: "TVmaze", url: s.url },
+      imdb: s.externals?.imdb || null, official: /^https:\/\//.test(https(s.officialSite) || "") ? https(s.officialSite) : null,
+      facts: [["Cadena", s.network?.name || s.webChannel?.name], ["Estreno", s.premiered], ["Estado", s.status === "Ended" ? `Terminó${s.ended ? " en " + yr(s.ended) : ""}` : s.status === "Running" ? "En emisión" : null],
+        ["Temporadas", s._embedded?.seasons?.length || null], ["Géneros", (s.genres || []).join(", ")], ["Idioma", s.language]],
+      extra: s.rating?.average ? [{ src: "TVmaze", value: (+s.rating.average).toFixed(1), scale: "/10", url: s.url }] : [],
+      source: "TVmaze",
+    };
+  },
+  async movie(it) {
+    const d = FN ? await callObras({ op: "details", cat: "movie", ...(await refOf(it) || {}), title: it.title, year: it.year }) : null;
+    return d || {};
+  },
+  async game(it) {
+    const d = FN ? await callObras({ op: "details", cat: "game", ...(await refOf(it) || {}), title: it.title }) : null;
+    return d || {};
+  },
+};
+async function loadDetails(id) {
+  if (DET.has(id)) return DET.get(id);
+  const it = ITEMS[id];
+  const saved = store.get("det:" + id);
+  if (saved) { DET.set(id, saved); return saved; }
+  if (!LIVE) return null;
+  const d = { ok: true };
+  try { Object.assign(d, await DETAIL[it.cat](it)); } catch (e) { d.ok = false; }
+  // Sinopsis en español (Wikipedia) cuando existe; si no, la de la fuente
+  try {
+    const wd = d.qid ? await wikidata(d.qid) : null;
+    const wk = await wikiES(it, wd?.eswiki || null) || (wd ? null : null);
+    if (wk) { d.synopsis = wk.text; d.synSrc = { name: "Wikipedia (CC BY-SA)", url: wk.url }; d.qid = d.qid || wk.qid; }
+    if ((it.cat === "movie" || it.cat === "tv") && d.qid) {
+      const w2 = wd || await wikidata(d.qid);
+      if (w2) { d.imdb = d.imdb || w2.imdb; d.wd = w2.scores; }
+    }
+  } catch (e) { /* sin Wikipedia: se queda la de la fuente */ }
+  // IMDb y Rotten Tomatoes oficiales (OMDb, con clave en la función "obras")
+  if (FN && d.imdb && !d.omdb) d.omdb = (await callObras({ op: "ratings", imdb: d.imdb }).catch(() => null)) || null;
+  DET.set(id, d);
+  if (d.ok) store.set("det:" + id, d, 7);
+  return d;
+}
+// Calificación de la comunidad: la real (archivo 07) o, en el prototipo, la de los perfiles de ejemplo
+const COMM = new Map();
+async function loadCommunity(id) {
+  if (BE.real && BE.cat[id]) {
+    const { data } = await BE.sb.rpc("item_community_rating", { p_item: BE.cat[id] });
+    COMM.set(id, { avg: data?.avg ?? null, count: data?.count || 0 });
+  } else {
+    const rs = [...Object.keys(USERS).map(u => vEntry(u, id)?.rating), vEntry(S.me.username, id)?.rating].filter(r => r);
+    COMM.set(id, { avg: rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : null, count: rs.length });
+  }
+  return COMM.get(id);
+}
+
+const fmt = v => (v == null || v === "" ? null : String(v));
+function rateTile(src, value, scale, note, url, cls = "") {
+  const inner = `<span class="rt-src">${esc(src)}</span><span class="rt-val"><b>${esc(value ?? "—")}</b>${value != null && scale ? `<small>${esc(scale)}</small>` : ""}</span><span class="rt-note">${esc(note || "")}</span>`;
+  return url ? `<a class="rate-tile ${cls}" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(src)}: ${esc(value ?? "sin dato")}${scale && value != null ? " " + esc(scale) : ""}. Abrir en ${esc(src)}">${inner}</a>`
+    : `<div class="rate-tile ${cls}">${inner}</div>`;
+}
+function ratingsHTML(it, d) {
+  const cm = COMM.get(it.id);
+  const tiles = [rateTile("Bóveda", cm ? (cm.avg != null ? cm.avg.toFixed(1) : null) : "…", "/10", cm ? (cm.count ? plural(cm.count, "voto", "votos") : "Sin votos todavía") : "Cargando", null, "rt-boveda")];
+  if (it.cat === "movie" || it.cat === "tv") {
+    const imdbUrl = d?.imdb ? `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/` : `https://www.imdb.com/find/?q=${encodeURIComponent(it.title)}`;
+    const rtUrl = `https://www.rottentomatoes.com/search?search=${encodeURIComponent(it.title)}`;
+    const im = d?.omdb?.imdb ? { v: d.omdb.imdb, n: d.omdb.imdbVotes ? `${d.omdb.imdbVotes} votos` : "IMDb" } : d?.wd?.imdb ? { v: d.wd.imdb.v.replace(/\/10$/, ""), n: `Vía Wikidata${d.wd.imdb.when ? " · " + d.wd.imdb.when : ""}` } : null;
+    const rt = d?.omdb?.rt ? { v: d.omdb.rt, n: "Tomatometer" } : d?.wd?.rt ? { v: d.wd.rt.v, n: `Vía Wikidata${d.wd.rt.when ? " · " + d.wd.rt.when : ""}` } : null;
+    tiles.push(rateTile("IMDb", im?.v ?? null, "/10", im?.n || (d || !LIVE ? "Ver en IMDb" : "Cargando"), imdbUrl, "rt-imdb"));
+    tiles.push(rateTile("Rotten Tomatoes", rt?.v ?? null, "", rt?.n || (d || !LIVE ? "Ver en Rotten Tomatoes" : "Cargando"), rtUrl, "rt-rotten"));
+  }
+  (d?.extra || []).forEach(r => tiles.push(rateTile(r.src, r.value, r.scale, r.count ? plural(r.count, "voto", "votos") : "", r.url)));
+  return `<section class="v-section" aria-labelledby="v-rate-t"><span class="eyebrow" id="v-rate-t">Calificaciones</span><div class="rate-grid">${tiles.join("")}</div></section>`;
+}
+function synopsisHTML(it, d) {
+  if (!LIVE) return "";
+  if (!d) return `<section class="v-section"><span class="eyebrow">Sinopsis</span><span class="skel ln"></span><span class="skel ln"></span><span class="skel ln short"></span></section>`;
+  if (!d.synopsis) return "";
+  const long = d.synopsis.length > 280;
+  return `<section class="v-section" aria-labelledby="v-syn-t"><span class="eyebrow" id="v-syn-t">Sinopsis</span>
+    <p class="syn${long ? " clamp" : ""}" id="v-syn">${esc(d.synopsis)}</p>
+    ${long ? `<button class="link-btn syn-more" data-act="syn-toggle" type="button" aria-expanded="false" aria-controls="v-syn">Leer más</button>` : ""}
+    ${d.synSrc ? `<span class="xs muted">Fuente: <a href="${esc(d.synSrc.url)}" target="_blank" rel="noopener noreferrer">${esc(d.synSrc.name)}</a></span>` : ""}
+  </section>`;
+}
+const factCell = ([k, v], wide) => `<div class="fact${wide ? " fact-wide" : ""}"><dt>${esc(k)}</dt><dd${k === "ISBN" ? ' class="mono"' : ""}>${esc(String(v))}</dd></div>`;
+// Plantilla dedicada para libros
+function bookSheetHTML(it, d) {
+  const b = d?.book || { author: it.creator, firstYear: it.year };
+  const F = [["Autor", b.author], ["Editorial", b.publisher], ["Primera publicación", b.firstYear], ["Esta edición", b.editionYear], ["Páginas", b.pages], ["Idioma", b.lang], ["ISBN", b.isbn], ["Ediciones", b.editions]].filter(f => fmt(f[1]));
+  const lead = [b.pages && plural(+b.pages, "página", "páginas"), b.publisher, b.lang].filter(Boolean).join(" · ");
+  return `<section class="book-sheet" aria-labelledby="v-book-t">
+    <div class="bs-head"><span class="eyebrow" id="v-book-t">Ficha del libro</span>${lead ? `<span class="bs-lead">${esc(lead)}</span>` : ""}</div>
+    <dl class="facts facts-book">${F.map(f => factCell(f, f[0] === "ISBN" || f[0] === "Autor")).join("")}</dl>
+    ${b.subjects?.length ? `<div class="bs-tags" aria-label="Temas">${b.subjects.map(s => `<span class="chip static">${esc(s)}</span>`).join("")}</div>` : ""}
+    ${d?.book ? `<span class="xs muted">Edición de referencia según Open Library${b.lang === "Español" ? " (en español)" : ""}.</span>` : LIVE && !d ? `<span class="skel ln short"></span>` : ""}
+  </section>`;
+}
+function factsHTML(it, d) {
+  const who = { album: "Artista", movie: "Dirección", tv: "Cadena", game: "Estudio", book: "Autor" }[it.cat];
+  const F = (d?.facts || [[who, it.creator], ["Año", it.year]]).filter(f => fmt(f[1]));
+  if (!F.length) return "";
+  return `<section class="v-section" aria-labelledby="v-facts-t"><span class="eyebrow" id="v-facts-t">Ficha técnica</span><dl class="facts">${F.map(f => factCell(f)).join("")}</dl></section>`;
+}
+function whereLinks(it, d) {
+  const t = encodeURIComponent(it.title), ta = encodeURIComponent(`${it.title} ${it.creator || ""}`.trim());
+  const L = {
+    book: [["Amazon México", `https://www.amazon.com.mx/s?k=${ta}&i=stripbooks`, "Comprar"], ["Gandhi", `https://www.gandhi.com.mx/catalogsearch/result/?q=${ta}`, "Comprar"], ["Open Library", d?.synSrc?.name === "Open Library" ? d.synSrc.url : `https://openlibrary.org/search?q=${ta}`, "Leer o pedir prestado"]],
+    album: [["Spotify", `https://open.spotify.com/search/${ta}`, "Escuchar"], ["Apple Music", `https://music.apple.com/mx/search?term=${ta}`, "Escuchar"], ["YouTube Music", `https://music.youtube.com/search?q=${ta}`, "Escuchar"]],
+    movie: [...(d?.providers || []).map(p => [p.name, p.url, p.kind]), ["JustWatch", `https://www.justwatch.com/mx/buscar?q=${t}`, "Dónde verla"], d?.imdb && ["IMDb", `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/`, "Ficha completa"]],
+    tv: [d?.official && ["Sitio oficial", d.official, "Ver"], ["JustWatch", `https://www.justwatch.com/mx/buscar?q=${t}`, "Dónde verla"], d?.imdb && ["IMDb", `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/`, "Ficha completa"]],
+    game: [["Steam", `https://store.steampowered.com/search/?term=${t}`, "Comprar"], ["Nintendo eShop", `https://www.nintendo.com/es-mx/search/#q=${t}`, "Comprar"], ["PlayStation Store", `https://store.playstation.com/es-mx/search/${t}`, "Comprar"], ["Xbox", `https://www.xbox.com/es-MX/search/results?q=${t}`, "Comprar"]],
+  }[it.cat].filter(Boolean).filter(l => /^https:\/\//.test(l[1]));
+  const verb = { book: "Dónde leerlo o comprarlo", album: "Dónde escucharlo", movie: "Dónde verla", tv: "Dónde verla", game: "Dónde jugarlo" }[it.cat];
+  return `<section class="v-section" id="v-where" aria-labelledby="v-where-t"><span class="eyebrow" id="v-where-t">${verb}</span>
+    <div class="where-grid">${L.map(([name, url, kind]) => `<a class="where-btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><span class="grow"><b>${esc(name)}</b><span>${esc(kind)}</span></span>${icon("share", 18)}</a>`).join("")}</div>
+    <span class="xs muted">Abre el sitio de cada plataforma. Bóveda no vende ni cobra por estos enlaces.</span>
+  </section>`;
+}
+function liveInfoHTML(id) {
+  const it = ITEMS[id], d = DET.get(id) || null;
+  return (it.cat === "book" ? bookSheetHTML(it, d) : factsHTML(it, d)) + ratingsHTML(it, d) + synopsisHTML(it, d);
+}
+const liveWhereHTML = id => whereLinks(ITEMS[id], DET.get(id) || null);
+function creditsLine(id) {
+  const it = ITEMS[id], d = DET.get(id);
+  if (!LIVE) return `Datos y portada en la app publicada: ${esc(CAT[it.cat].src)}. Aquí la portada es una ilustración del prototipo.`;
+  return `Datos: ${esc(d?.source || CAT[it.cat].src)}${d?.synSrc?.name?.startsWith("Wikipedia") ? " y Wikipedia" : ""}. ${it.img ? "Portada de la fuente oficial." : "Portada ilustrada mientras encontramos la oficial."}`;
+}
+// Se llama desde la ficha (10b_pages.js): pinta lo que ya se sabe y completa al llegar
+function paintDetails(id, el) {
+  const fill = () => {
+    if (!el.isConnected) return;
+    const a = $("#v-info", el), b = $("#v-where", el), c = $("#v-credits", el);
+    if (a) a.innerHTML = liveInfoHTML(id);
+    if (b) b.outerHTML = liveWhereHTML(id);
+    if (c) c.innerHTML = creditsLine(id);
+  };
+  loadCommunity(id).then(fill, () => {});
+  if (LIVE && !DET.has(id)) loadDetails(id).then(fill, fill);
+  resolveCover(id);
 }
 
 // ===== 13_boot.js
