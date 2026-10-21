@@ -4980,14 +4980,21 @@ function matchScore(it, r) {
   const y = it.year && r.year ? (Math.abs(+it.year - +r.year) <= 1 ? 1 : 0) : .5;
   return .65 * t + .25 * c + .1 * y;
 }
+// Temas de Open Library: sin etiquetas de biblioteca, idioma o traducción; sin repetidos
+const SUBJ_NOISE = /language|translation|readers|accessible|protected|daisy|library|lending|large type|staff pick|nyt:|award|reading level|in spanish|fiction, general/i;
+function cleanSubjects(list) {
+  const out = [];
+  (list || []).forEach(s => { s = String(s).trim(); if (s.length > 2 && s.length < 28 && !SUBJ_NOISE.test(s) && !out.some(o => norm(o) === norm(s) || sim(o, s) > .8)) out.push(s); });
+  return out.slice(0, 4);
+}
 const yr = d => { const n = parseInt(String(d || "").slice(0, 4), 10); return n > 999 && n < 2101 ? n : null; };
 const https = u => (u ? String(u).replace(/^http:\/\//, "https://") : null);
 const stripHTML = h => { const d = document.createElement("div"); d.innerHTML = String(h || ""); return d.textContent.replace(/\s+/g, " ").trim(); };
 
 // ---------------------------------------------------------------- memoria del navegador (opcional)
 const store = {
-  get(k) { try { const v = JSON.parse(localStorage.getItem("bv1:" + k)); return v && v.e > Date.now() ? v.v : null; } catch (e) { return null; } },
-  set(k, v, days) { try { localStorage.setItem("bv1:" + k, JSON.stringify({ v, e: Date.now() + days * 864e5 })); } catch (e) { /* sin espacio o bloqueado */ } },
+  get(k) { try { const v = JSON.parse(localStorage.getItem("bv2:" + k)); return v && v.e > Date.now() ? v.v : null; } catch (e) { return null; } },
+  set(k, v, days) { try { localStorage.setItem("bv2:" + k, JSON.stringify({ v, e: Date.now() + days * 864e5 })); } catch (e) { /* sin espacio o bloqueado */ } },
 };
 
 // ---------------------------------------------------------------- red: con turnos por sitio y tiempo límite
@@ -5043,9 +5050,9 @@ function addExternal(r) {
   return id;
 }
 const luc = t => String(t).replace(/([+\-!(){}[\]^"~*?:\\/]|&&|\|\|)/g, "\\$1");
-const OL_FIELDS = "key,title,author_name,first_publish_year,cover_i,ratings_average,ratings_count";
+const OL_FIELDS = "key,title,author_name,first_publish_year,cover_i,ratings_average,ratings_count,editions,editions.cover_i,editions.language";
 const olRow = x => ({ cat: "book", src: "openlibrary", ext: x.key, title: x.title, creator: x.author_name?.[0], year: x.first_publish_year,
-  img: x.cover_i ? `https://covers.openlibrary.org/b/id/${x.cover_i}-L.jpg?default=false` : null });
+  img: (x.editions?.docs?.[0]?.cover_i || x.cover_i) ? `https://covers.openlibrary.org/b/id/${x.editions?.docs?.[0]?.cover_i || x.cover_i}-L.jpg?default=false` : null });
 const mbRow = x => ({ cat: "album", src: "musicbrainz", ext: x.id, title: x.title,
   creator: (x["artist-credit"] || []).map(a => (a.name || a.artist?.name || "") + (a.joinphrase || "")).join("").trim(),
   year: yr(x["first-release-date"]), img: `https://coverartarchive.org/release-group/${x.id}/front-500` });
@@ -5057,11 +5064,11 @@ const SRC = {
   book: {
     name: "Open Library",
     async search(q, signal) {
-      const d = await getJSON(`https://openlibrary.org/search.json?limit=12&fields=${OL_FIELDS}&q=${encodeURIComponent(q)}`, { signal });
+      const d = await getJSON(`https://openlibrary.org/search.json?limit=12&lang=es&fields=${OL_FIELDS}&q=${encodeURIComponent(q)}`, { signal });
       return (d.docs || []).map(olRow);
     },
     async find(it) {
-      const d = await getJSON(`https://openlibrary.org/search.json?limit=6&fields=${OL_FIELDS}&title=${encodeURIComponent(it.title)}&author=${encodeURIComponent(it.creator || "")}`);
+      const d = await getJSON(`https://openlibrary.org/search.json?limit=6&lang=es&fields=${OL_FIELDS}&title=${encodeURIComponent(it.title)}&author=${encodeURIComponent(it.creator || "")}`);
       return (d.docs || []).map(olRow);
     },
   },
@@ -5211,7 +5218,7 @@ function searchLocal(q, cat = "all") {
   if (!qn) return [];
   const qt = qn.split(" "), mine = new Set(vaultOf(S.me.username).map(v => v.id));
   return index().filter(r => cat === "all" || ITEMS[r.id].cat === cat)
-    .map(r => [r.id, scoreRow(r, qn, qt) + (mine.has(r.id) ? 6 : 0)])
+    .map(r => { const it = ITEMS[r.id], s = scoreRow(r, qn, qt); return [r.id, s && s + (mine.has(r.id) ? 6 : 0) + (it.src ? 0 : 3) + (it.creator ? 2 : 0) + (it.img || it.imgCand ? 1 : 0)]; })
     .filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).map(x => x[0]);
 }
 const SR = { gen: 0, ctl: null, timer: 0, cache: new Map(), pending: new Set(), failed: new Set() };
@@ -5224,9 +5231,25 @@ function remoteIds(q, cat) {
   const local = searchLocal(q, cat).filter(id => !ITEMS[id].src);
   return out.filter(id => !local.some(l => ITEMS[l].cat === ITEMS[id].cat && matchScore(ITEMS[l], ITEMS[id]) >= .86));
 }
+// Sin repetidos: una obra de fuera que es la misma que una del catálogo (o que otra ya listada) no se repite
+function dedupe(ids) {
+  const out = [];
+  for (const id of ids) {
+    const it = ITEMS[id];
+    const dup = out.some(o => {
+      const x = ITEMS[o];
+      if (x.cat !== it.cat) return false;
+      if (norm(x.title) === norm(it.title) && norm(x.creator) === norm(it.creator) && String(x.year) === String(it.year)) return true;
+      if (it.src && matchScore(x, it) >= .86) return true;
+      return it.src && !it.creator && sim(x.title, it.title) >= .95;   // sin autor y con el mismo título: ruido
+    });
+    if (!dup) out.push(id);
+  }
+  return out;
+}
 function mergedIds(q, cat) {
   const loc = searchLocal(q, cat);
-  return [...loc, ...remoteIds(q, cat).filter(id => !loc.includes(id))];
+  return dedupe([...loc, ...remoteIds(q, cat).filter(id => !loc.includes(id))]);
 }
 // Busca afuera 300 ms después de la última tecla; cancela lo anterior; guarda en caché
 function runRemote(q, cat) {
@@ -5423,7 +5446,8 @@ const DETAIL = {
     const desc = typeof w.description === "string" ? w.description : w.description?.value;
     const E = eds.entries || [];
     // Edición de referencia: en español, con ISBN, páginas y editorial (la más completa)
-    const sc = e => ((e.languages || []).some(l => l.key === "/languages/spa") ? 8 : 0) + (e.isbn_13 || e.isbn_10 ? 4 : 0) + (e.number_of_pages ? 2 : 0) + ((e.publishers || []).length ? 1 : 0);
+    const selfPub = /createspace|independently published|lulu|kindle direct|amazon digital|bibliolife|nabu press|forgotten books/i;
+    const sc = e => ((e.languages || []).some(l => l.key === "/languages/spa") ? 8 : 0) + (e.isbn_13 || e.isbn_10 ? 4 : 0) + (e.number_of_pages ? 2 : 0) + ((e.publishers || []).length ? 1 : 0) + ((e.covers || []).some(c => c > 0) ? 2 : 0) - (selfPub.test((e.publishers || []).join(" ")) ? 9 : 0);
     const ed = E.slice().sort((a, b) => sc(b) - sc(a))[0];
     const lk = ed?.languages?.[0]?.key?.split("/").pop();
     return {
@@ -5432,9 +5456,10 @@ const DETAIL = {
       book: {
         author: it.creator, publisher: ed?.publishers?.[0], pages: ed?.number_of_pages, isbn: ed?.isbn_13?.[0] || ed?.isbn_10?.[0],
         lang: LANGS[lk] || null, editionYear: yr(ed?.publish_date), firstYear: it.year || yr(w.first_publish_date),
-        editions: eds.size || E.length || null, subjects: (w.subjects || []).filter(s => s.length < 28).slice(0, 5),
+        editions: eds.size || E.length || null, subjects: cleanSubjects(w.subjects),
       },
       extra: rt?.summary?.count ? [{ src: "Open Library", value: (+rt.summary.average).toFixed(1), scale: "/5", count: rt.summary.count, url: `https://openlibrary.org${key}` }] : [],
+      edCover: (ed?.covers || []).find(c => c > 0) ? `https://covers.openlibrary.org/b/id/${ed.covers.find(c => c > 0)}-L.jpg?default=false` : null,
       source: "Open Library",
     };
   },
@@ -5491,6 +5516,10 @@ async function loadDetails(id) {
       if (w2) { d.imdb = d.imdb || w2.imdb; d.wd = w2.scores; }
     }
   } catch (e) { /* sin Wikipedia: se queda la de la fuente */ }
+  if (d.edCover && !it.img) {
+    const ok = await verifyCover(it, d.edCover).catch(() => null);
+    if (ok) { it.img = ok.u; it.fit = ok.f; store.set("cv:" + id, ok, 30); paintCover(id); saveCover(id, ok.u); }
+  }
   // IMDb y Rotten Tomatoes oficiales (OMDb, con clave en la función "obras")
   if (FN && d.imdb && !d.omdb) d.omdb = (await callObras({ op: "ratings", imdb: d.imdb }).catch(() => null)) || null;
   DET.set(id, d);
@@ -5577,7 +5606,7 @@ function whereLinks(it, d) {
 }
 function liveInfoHTML(id) {
   const it = ITEMS[id], d = DET.get(id) || null;
-  return (it.cat === "book" ? bookSheetHTML(it, d) : factsHTML(it, d)) + ratingsHTML(it, d) + synopsisHTML(it, d);
+  return synopsisHTML(it, d) + ratingsHTML(it, d) + (it.cat === "book" ? bookSheetHTML(it, d) : factsHTML(it, d));
 }
 const liveWhereHTML = id => whereLinks(ITEMS[id], DET.get(id) || null);
 function creditsLine(id) {
