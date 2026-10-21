@@ -1251,7 +1251,7 @@ button.lrow:active, .lrow.tap:active { background: var(--press); }
 /* Sinopsis con "Leer más" */
 .syn { margin: 0; font-size: var(--t-15); line-height: 1.5; color: var(--fg); }
 .syn.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.v-section .syn-more { align-self: flex-start; min-height: 44px; margin: -8px 0; font-weight: 700; color: var(--accent-text); }
+.v-section .syn-more { align-self: flex-start; min-height: 44px; margin: -8px 0 -8px -8px; font-weight: 700; color: var(--accent-text); }
 
 /* Ficha técnica: etiqueta a la izquierda, dato a la derecha, línea fina entre renglones */
 .facts { display: flex; flex-direction: column; margin: 0; }
@@ -5614,13 +5614,43 @@ function synopsisHTML(it, d) {
     ${d.synSrc ? `<span class="xs muted v-src">Fuente: <a href="${esc(d.synSrc.url)}" target="_blank" rel="noopener noreferrer">${esc(d.synSrc.name)}${NEW_TAB}</a></span>` : ""}
   </section>`;
 }
+// Datos de las fuentes en español y con formato cuidado: fechas, idiomas, géneros y editoriales
+// que llegan en mayúsculas. Se aplica al mostrar (así también sirve con fichas ya guardadas).
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+function niceDate(s) {
+  const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(s), mes = m && MESES[+m[2] - 1];
+  if (!mes) return m ? m[1] : s;
+  return m[3] ? `${+m[3]} de ${mes} de ${m[1]}` : `${mes[0].toUpperCase()}${mes.slice(1)} de ${m[1]}`;
+}
+const ES = {
+  english: "Inglés", spanish: "Español", japanese: "Japonés", korean: "Coreano", french: "Francés", german: "Alemán", italian: "Italiano", portuguese: "Portugués", danish: "Danés", swedish: "Sueco", norwegian: "Noruego", turkish: "Turco", chinese: "Chino", russian: "Ruso", dutch: "Neerlandés", polish: "Polaco", arabic: "Árabe", hebrew: "Hebreo", thai: "Tailandés",
+  en: "Inglés", es: "Español", ja: "Japonés", ko: "Coreano", fr: "Francés", de: "Alemán", it: "Italiano", pt: "Portugués", da: "Danés", sv: "Sueco", no: "Noruego", tr: "Turco", zh: "Chino", ru: "Ruso", hi: "Hindi", nl: "Neerlandés", pl: "Polaco",
+  action: "Acción", adult: "Adultos", adventure: "Aventura", children: "Infantil", comedy: "Comedia", crime: "Crimen", diy: "Hazlo tú mismo", espionage: "Espionaje", family: "Familia", fantasy: "Fantasía", food: "Cocina", history: "Historia", horror: "Terror", medical: "Médica", music: "Música", mystery: "Misterio", nature: "Naturaleza", "science-fiction": "Ciencia ficción", sports: "Deportes", supernatural: "Sobrenatural", thriller: "Suspenso", travel: "Viajes", war: "Bélica",
+  electronic: "Electrónica", classical: "Clásica", latin: "Latina", "latin pop": "Pop latino", "alternative rock": "Rock alternativo", "progressive rock": "Rock progresivo", "psychedelic rock": "Rock psicodélico", "contemporary r&b": "R&B contemporáneo", "r&b": "R&B", soundtrack: "Banda sonora", "singer-songwriter": "Cantautor", reggaeton: "Reguetón",
+};
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const tr = s => ES[s.toLowerCase()] || cap(s);
+// "TURNER PUBLICACIONES S.L." → "Turner Publicaciones S.L." (solo si llega todo en mayúsculas)
+function tidyCaps(s) {
+  if (s !== s.toUpperCase() || !/\p{Lu}{4}/u.test(s)) return s;
+  const small = new Set(["de", "del", "la", "las", "los", "el", "y", "e", "en"]);
+  return s.toLowerCase().split(" ").map((w, i) => (/^(\p{L}\.)+$/u.test(w) ? w.toUpperCase() : i && small.has(w) ? w : cap(w))).join(" ");
+}
+function nice(k, v) {
+  const s = String(v);
+  if (/^\d{4}-\d{2}(-\d{2})?$/.test(s)) return niceDate(s);
+  if (/^Idioma/.test(k)) return tr(s);
+  if (k === "Géneros") return s.split(/,\s*/).map(tr).join(", ");
+  if (k === "Editorial") return tidyCaps(s);
+  return s;
+}
 // Ficha técnica: renglones con línea fina (etiqueta a la izquierda, dato a la derecha)
-const factRow = ([k, v]) => `<div class="fact"><dt>${esc(k)}</dt><dd${k === "ISBN" ? ' class="mono"' : ""}>${esc(String(v))}</dd></div>`;
+const factRow = ([k, v]) => `<div class="fact"><dt>${esc(k)}</dt><dd${k === "ISBN" ? ' class="mono"' : ""}>${esc(nice(k, v))}</dd></div>`;
 // Plantilla dedicada para libros
 function bookSheetHTML(it, d) {
   const b = d?.book || { author: it.creator, firstYear: it.year };
   const F = [["Autor", b.author], ["Editorial", b.publisher], ["Primera publicación", b.firstYear], ["Esta edición", b.editionYear], ["Páginas", b.pages], ["Idioma", b.lang], ["ISBN", b.isbn], ["Ediciones", b.editions]].filter(f => fmt(f[1]));
-  const lead = [b.pages && plural(+b.pages, "página", "páginas"), b.publisher, b.lang].filter(Boolean).join(" · ");
+  const lead = [b.pages && plural(+b.pages, "página", "páginas"), b.publisher && tidyCaps(b.publisher), b.lang].filter(Boolean).join(" · ");
   return `<section class="v-section" aria-labelledby="v-book-t"><span class="eyebrow" id="v-book-t">Ficha del libro</span>
     <div class="spec book-sheet">
       ${lead ? `<p class="bs-lead">${esc(lead)}</p>` : ""}
