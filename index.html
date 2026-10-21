@@ -1283,7 +1283,7 @@ button.lrow:active, .lrow.tap:active { background: var(--press); }
 <meta name="apple-mobile-web-app-title" content="Bóveda">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script>window.BOVEDA_CONFIG = {"url": "https://janguhfxpnabszyagmqe.supabase.co", "key": "sb_publishable_Q58EO0HP9-9qVrrs4rRB1g_R01p9l7w"};</script>
+<script>window.BOVEDA_CONFIG = {"url": "https://janguhfxpnabszyagmqe.supabase.co", "key": "sb_publishable_Q58EO0HP9-9qVrrs4rRB1g_R01p9l7w", "obras": false};</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF3D00"/><stop offset=".55" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFD54F"/></linearGradient></defs></svg>
@@ -4981,7 +4981,7 @@ function matchScore(it, r) {
   return .65 * t + .25 * c + .1 * y;
 }
 // Temas de Open Library: sin etiquetas de biblioteca, idioma o traducción; sin repetidos
-const SUBJ_NOISE = /language|translation|readers|accessible|protected|daisy|library|lending|large type|staff pick|nyt:|award|reading level|in spanish|fiction, general/i;
+const SUBJ_NOISE = /^(fiction|ficcion|ficción|novela|novel|novels|literature|literatura|general)$|language|translation|readers|accessible|protected|daisy|library|lending|large type|staff pick|nyt:|award|reading level|in spanish|fiction, general/i;
 function cleanSubjects(list) {
   const out = [];
   (list || []).forEach(s => { s = String(s).trim(); if (s.length > 2 && s.length < 28 && !SUBJ_NOISE.test(s) && !out.some(o => norm(o) === norm(s) || sim(o, s) > .8)) out.push(s); });
