@@ -244,6 +244,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .group-note { font-size: var(--t-13); color: var(--muted); margin: -2px 4px 0; }
 .lrow { display: flex; align-items: center; gap: 12px; padding: 8px 16px; min-height: 56px; width: 100%; text-align: left; color: var(--fg); transition: background .2s; }
 .lrow + .lrow { border-top: 1px solid var(--line); }
+a.lrow { text-decoration: none; }
 button.lrow:active, .lrow.tap:active { background: var(--press); }
 .lrow .tile { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); }
 .lrow .tile svg { width: 19px; height: 19px; }
@@ -1211,55 +1212,77 @@ button.lrow:active, .lrow.tap:active { background: var(--press); }
 @keyframes skel { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 
-/* ---------------------------------------------------------------- ficha de la obra */
-.v-live { display: flex; flex-direction: column; gap: 16px; }
-.v-section { display: flex; flex-direction: column; gap: 8px; }
-.v-section a { color: var(--accent-text); font-weight: 700; }
+/* ---------------------------------------------------------------- ficha de la obra
+   Una sola familia de tarjetas: fondo de tarjeta, borde fino, esquinas de 16 px y renglones
+   separados por línea fina (calificaciones, ficha técnica y dónde conseguirla). */
+.v-live { display: flex; flex-direction: column; gap: 24px; }
+.v-section { display: flex; flex-direction: column; gap: 12px; }
+#v-where { margin-top: 8px; }
+.v-src a { color: var(--accent-text); font-weight: 700; }
+.spec { margin: 0; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
 
-/* Calificaciones de varias fuentes */
-.rate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
-.rate-tile { display: flex; flex-direction: column; gap: 4px; min-height: 96px; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); text-decoration: none; transition: background-color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
-.v-section a.rate-tile { color: var(--fg); font-weight: 400; }
-.rate-tile.rt-boveda { border-color: var(--accent-line); box-shadow: var(--sh-1); }
-.rt-src { font-size: var(--t-12); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* Calificaciones: una tira con columnas (la de Bóveda resaltada con la perilla) */
+.rate-strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border-radius: 16px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+.rate-cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 12px 16px; color: var(--fg); text-decoration: none; transition: background-color .2s var(--ease); }
+.rate-cell + .rate-cell { border-inline-start: 1px solid var(--line); }
+.rt-src { display: flex; align-items: center; gap: 8px; font-size: var(--t-12); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.rc-boveda .rt-src::before { content: ""; flex-shrink: 0; width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
 .rt-val { display: flex; align-items: baseline; gap: 4px; }
-.rt-val b { font-family: var(--f-display); font-size: var(--t-28); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.rt-val b { font-family: var(--f-display); font-size: var(--t-28); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.rc-boveda .rt-val b { color: var(--accent-text); }
 .rt-val small { font-size: var(--t-13); font-weight: 500; color: var(--muted); }
 .rt-note { font-size: var(--t-12); font-weight: 500; color: var(--muted); }
+
+/* Enlaces discretos con el ícono de cada sitio (IMDb, Rotten Tomatoes) */
+.rate-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.ext-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px 8px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); font-size: var(--t-13); font-weight: 700; text-decoration: none; transition: background-color .2s var(--ease), transform .2s var(--ease); }
+.ext-chip > svg { flex-shrink: 0; width: 16px; height: 16px; color: var(--muted); }
+
+/* Ícono de la plataforma sobre una placa clara (así se ve en cualquier ambiente) */
+.brand { flex-shrink: 0; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 12px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.brand img { width: 20px; height: 20px; object-fit: contain; }
+.brand-ini { display: none; font-family: var(--f-display); font-size: var(--t-15); font-weight: 800; line-height: 1; color: var(--fg); }
+.brand.no-img { background: var(--surface-2); }
+.brand.no-img .brand-ini { display: block; }
+.brand.sm { width: 28px; height: 28px; border-radius: 999px; }
+.brand.sm img { width: 16px; height: 16px; }
+.brand.sm .brand-ini { font-size: var(--t-12); }
 
 /* Sinopsis con "Leer más" */
 .syn { margin: 0; font-size: var(--t-15); line-height: 1.5; color: var(--fg); }
 .syn.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.v-section .syn-more { align-self: flex-start; min-height: 44px; font-weight: 700; color: var(--accent-text); }
+.v-section .syn-more { align-self: flex-start; min-height: 44px; margin: -8px 0; font-weight: 700; color: var(--accent-text); }
 
-/* Ficha técnica (todas las obras) */
-.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
-.fact { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
-.fact dt { font-size: var(--t-12); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.fact dd { margin: 0; font-size: var(--t-15); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
-.fact-wide { grid-column: 1 / -1; }
+/* Ficha técnica: etiqueta a la izquierda, dato a la derecha, línea fina entre renglones */
+.facts { display: flex; flex-direction: column; margin: 0; }
+.spec.facts { padding: 0 16px; }
+.fact { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; min-width: 0; padding: 12px 0; }
+.fact + .fact { border-top: 1px solid var(--line); }
+.fact dt { flex-shrink: 0; max-width: 45%; font-size: var(--t-13); font-weight: 500; color: var(--muted); }
+.fact dd { margin: 0; min-width: 0; font-size: var(--t-15); font-weight: 700; line-height: 1.25; text-align: right; overflow-wrap: anywhere; }
 .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 
-/* Plantilla de libros: tarjeta propia, renglón editorial en serif y rejilla que crece con el espacio */
-.book-sheet { container-type: inline-size; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-1); }
-.book-sheet .fact { background: var(--bg); }
-.bs-head { display: flex; flex-direction: column; gap: 4px; }
-.bs-lead { font-family: var(--f-serif); font-size: var(--t-17); font-weight: 700; line-height: 1.25; }
-.bs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-@container (min-width: 520px) { .facts-book { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Plantilla de libros: renglón editorial en serif, ficha y temas en la misma tarjeta */
+.book-sheet { display: flex; flex-direction: column; padding: 0 16px; }
+.book-sheet > * + * { border-top: 1px solid var(--line); }
+.bs-lead { margin: 0; padding: 16px 0 12px; font-family: var(--f-serif); font-size: var(--t-17); font-weight: 700; line-height: 1.25; }
+.bs-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0 16px; }
 
-/* Dónde verla, leerla, escucharla o comprarla */
-.where-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(144px, 1fr)); gap: 8px; }
-.v-section a.where-btn { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 12px 8px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); font-weight: 400; text-decoration: none; transition: background-color .2s var(--ease), transform .2s var(--ease); }
-.where-btn b { display: block; font-size: var(--t-15); font-weight: 700; }
-.where-btn .grow span { display: block; font-size: var(--t-12); font-weight: 500; color: var(--muted); }
-.where-btn svg { flex-shrink: 0; width: 18px; height: 18px; color: var(--muted); }
+/* Dónde verla, leerla, escucharla o comprarla: lista con el ícono de cada plataforma */
+.where-list { display: flex; flex-direction: column; overflow: hidden; }
+.where-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; color: var(--fg); text-decoration: none; transition: background-color .2s var(--ease); }
+.where-row + .where-row { border-top: 1px solid var(--line); }
+.where-row .grow { min-width: 0; }
+.where-row b { display: block; font-size: var(--t-15); font-weight: 700; line-height: 1.25; }
+.where-row .grow span { display: block; font-size: var(--t-12); font-weight: 500; color: var(--muted); }
+.where-row > svg { flex-shrink: 0; width: 18px; height: 18px; color: var(--muted); }
 
 @media (hover: hover) {
-  .sr-main:hover, .sr-person:hover { background: var(--hover); }
-  .sr-cat-tile:hover, .v-section a.rate-tile:hover, .v-section a.where-btn:hover { background: var(--surface-2); }
+  .sr-main:hover, .sr-person:hover, a.rate-cell:hover, .where-row:hover { background: var(--hover); }
+  .sr-cat-tile:hover, .ext-chip:hover { background: var(--surface-2); }
 }
-.sr-cat-tile:active, .v-section a.rate-tile:active, .v-section a.where-btn:active { transform: scale(.98); }
+.sr-cat-tile:active, .ext-chip:active { transform: scale(.98); }
+a.rate-cell:active, .where-row:active { background: var(--press); }
 
 /* =====================================================================
    ACCESIBILIDAD: alto contraste, movimiento reducido y modo daltonismo
@@ -1272,6 +1295,7 @@ button.lrow:active, .lrow.tap:active { background: var(--press); }
 @media (prefers-reduced-motion: reduce) {
   .vinyl .disc, .flame path, .tv .scan, .wtrack, .sig-disc, .amb-aurora .device::before, .beam { animation: none !important; }
 }
+.hc .spec, .hc .rate-strip, .hc .ext-chip, .hc .fact + .fact, .hc .book-sheet > * + *, .hc .rate-cell + .rate-cell, .hc .where-row + .where-row { border-width: 2px; }
 
 </style>
 <meta name="description" content="Tus gustos dicen quién eres. Guarda lo que escuchas, ves, lees y juegas, y conoce gente afín.">
@@ -1669,33 +1693,44 @@ function leftOf(p) {
   return left < 60 ? `${Math.round(left)} min` : left < 1440 ? `${Math.round(left / 60)} h` : `${Math.round(left / 1440)} d`;
 }
 
-// ---------------------------------------------------------------- íconos (trazo de 2 px, 24×24)
-const sv = (d, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
+// ---------------------------------------------------------------- íconos propios de Bóveda (24×24)
+// Esencia: trazo de 1.8 px con puntas y esquinas redondas, formas hechas de círculos y rectángulos
+// suaves y, en los de interacción, la "perilla" de la bóveda: un punto que conecta con el logotipo.
+// Las versiones llenas recortan la perilla.
+// (los atributos extra van primero: en HTML, si un atributo se repite, gana el primero)
+const sv = (d, extra = "") => `<svg viewBox="0 0 24 24" ${extra} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+// Lleno con el mismo contorno que la versión de línea (así ambas miden igual)
+const fs = d => `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const knob = (x, y, r = 1.15) => `<circle cx="${x}" cy="${y}" r="${r}" fill="currentColor" stroke="none"/>`;
+const hole = (x, y, r = 2.05) => `M${x} ${y - r}a${r} ${r} 0 1 0 0 ${2 * r}a${r} ${r} 0 1 0 0-${2 * r}Z`;
 const fl = d => `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${d}</svg>`;
+// Globo de diálogo: comentarios (cola a la izquierda) y, reflejado, mensajes
+const BUBBLE = "M8 4.5h8A4.5 4.5 0 0 1 20.5 9v3.5a4.5 4.5 0 0 1-4.5 4.5h-4L8 20.5V17a4.5 4.5 0 0 1-4.5-4.5V9A4.5 4.5 0 0 1 8 4.5Z";
 const ICON = {
-  home: sv('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),
-  homeFill: fl('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),
-  compass: sv('<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>'),
-  compassFill: fl('<path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.4 5.6-2.4 6.1-6.1 2.4 2.4-6.1z"/>'),
-  plus: sv('<path d="M12 5v14M5 12h14"/>', 'stroke-width="2.4"'),
+  home: sv('<path d="M4 10.4 11.2 4.6a1.3 1.3 0 0 1 1.6 0L20 10.4V19a1.5 1.5 0 0 1-1.5 1.5H15V16a3 3 0 0 0-6 0v4.5H5.5A1.5 1.5 0 0 1 4 19Z"/>'),
+  homeFill: fs('<path d="M4 10.4 11.2 4.6a1.3 1.3 0 0 1 1.6 0L20 10.4V19a1.5 1.5 0 0 1-1.5 1.5H15V16a3 3 0 0 0-6 0v4.5H5.5A1.5 1.5 0 0 1 4 19Z"/>'),
+  compass: sv('<circle cx="12" cy="12" r="8.6"/><path d="m15.2 8.8-1.9 4.5-4.5 1.9 1.9-4.5Z"/>' + knob(12, 12, .95)),
+  compassFill: fs('<path fill-rule="evenodd" stroke="none" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm3.6 5.9-2.2 5.1-5.1 2.2 2.2-5.1Z"/>' + knob(12, 12, 1)),
+  plus: sv('<path d="M12 5v14M5 12h14"/>', 'stroke-width="2"'),
   plusSq: sv('<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/>'),
-  chat: sv('<path d="M20 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.2A8 8 0 1 1 20 11.5Z"/>'),
-  chatFill: fl('<path d="M20 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.2A8 8 0 1 1 20 11.5Z"/>'),
-  user: sv('<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>'),
-  heart: sv('<path d="M12 20.5s-8-4.6-8-11A4.5 4.5 0 0 1 12 6.6a4.5 4.5 0 0 1 8 2.9c0 6.4-8 11-8 11Z"/>'),
-  heartFill: fl('<path d="M12 20.5s-8-4.6-8-11A4.5 4.5 0 0 1 12 6.6a4.5 4.5 0 0 1 8 2.9c0 6.4-8 11-8 11Z"/>'),
-  comment: sv('<path d="M20 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.2A8 8 0 1 1 20 11.5Z"/>'),
-  share: sv('<path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/>'),
-  bookmark: sv('<path d="M6 3h12v18l-6-4-6 4z"/>'),
-  bookmarkFill: fl('<path d="M6 3h12v18l-6-4-6 4z"/>'),
+  chat: sv('<path transform="matrix(-1 0 0 1 24 0)" d="' + BUBBLE + '"/>' + knob(9.6, 10.75, 1.05) + knob(14.4, 10.75, 1.05)),
+  chatFill: fs('<path fill-rule="evenodd" transform="matrix(-1 0 0 1 24 0)" d="' + BUBBLE + hole(9.6, 10.75, 1.95) + hole(14.4, 10.75, 1.95) + '"/>'),
+  user: sv('<circle cx="12" cy="8.2" r="3.8"/><path d="M4.8 20.5a7.2 7.2 0 0 1 14.4 0"/>'),
+  heart: sv('<path d="M12 20 4.9 12.9a5 5 0 0 1 7.1-7.06 5 5 0 0 1 7.1 7.06Z"/>' + knob(7.7, 8.8)),
+  heartFill: fs('<path fill-rule="evenodd" d="M12 20 4.9 12.9a5 5 0 0 1 7.1-7.06 5 5 0 0 1 7.1 7.06Z' + hole(7.7, 8.8) + '"/>'),
+  comment: sv('<path d="' + BUBBLE + '"/>' + knob(8.5, 10.75)),
+  share: sv('<path d="M20.4 3.6 3.9 10.2a.7.7 0 0 0 0 1.3l6.5 2.4 2.4 6.5a.7.7 0 0 0 1.3 0Z"/><path d="m10.4 13.9 4.6-4.6"/>' + knob(5.2, 18.8)),
+  bookmark: sv('<path d="M7 3.5h10A1.5 1.5 0 0 1 18.5 5v15.2l-6.5-4.2-6.5 4.2V5A1.5 1.5 0 0 1 7 3.5Z"/>' + knob(12, 9.2, 1.2)),
+  bookmarkFill: fs('<path fill-rule="evenodd" d="M7 3.5h10A1.5 1.5 0 0 1 18.5 5v15.2l-6.5-4.2-6.5 4.2V5A1.5 1.5 0 0 1 7 3.5Z' + hole(12, 9.2) + '"/>'),
   more: fl('<circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/>'),
   menu: sv('<path d="M4 7h16M4 12h16M4 17h16"/>'),
-  back: sv('<path d="m15 5-7 7 7 7"/>', 'stroke-width="2.4"'),
+  back: sv('<path d="m15 5-7 7 7 7"/>', 'stroke-width="2"'),
   chev: sv('<path d="m9 5 7 7-7 7"/>'),
-  close: sv('<path d="M6 6l12 12M18 6 6 18"/>', 'stroke-width="2.4"'),
-  search: sv('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
-  send: sv('<path d="M5 12h14M13 6l6 6-6 6"/>', 'stroke-width="2.4"'),
-  check: sv('<path d="m5 12.5 4.5 4.5L19 7.5"/>', 'stroke-width="2.8"'),
+  close: sv('<path d="M6 6l12 12M18 6 6 18"/>', 'stroke-width="2"'),
+  search: sv('<circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/>'),
+  send: sv('<path d="M5 12h14M13 6l6 6-6 6"/>', 'stroke-width="2"'),
+  check: sv('<path d="m5 12.5 4.5 4.5L19 7.5"/>', 'stroke-width="2.2"'),
+  external: sv('<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 11 13"/><path d="M18 14v3.5a2 2 0 0 1-2 2H6.5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2H10"/>'),
   lock: sv('<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),
   music: sv('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
   movie: sv('<rect x="3" y="8" width="18" height="13" rx="2"/><path d="m3 8 2.5-4.5L21 3l-.8 4.6"/><path d="m8 4 2.5 4M13 3.5 15.5 8"/>'),
@@ -3889,6 +3924,8 @@ function chipChoice(key, opts) {
   const cur = getKey(key);
   return `<div class="chips wrap">${opts.map(([v, l]) => chipBtn("chip-choice", l, cur === v, `data-key="${key}" data-v="${v}"`)).join("")}</div>`;
 }
+// Enlace a una página fuera de la app (en la beta web: aviso de privacidad y términos)
+const linkRow = (href, title, ico) => `<a class="lrow" href="${href}" target="_blank" rel="noopener" data-search="${esc(title.toLowerCase())}">${tileIco(ico)}<span class="grow"><b>${title}</b></span>${ICON.external.replace("<svg", '<svg class="chev"')}<span class="sr"> (se abre en otra pestaña)</span></a>`;
 const section = (label, rows, note = "") => `<span class="group-label">${label}</span>${note ? `<p class="group-note">${note}</p>` : ""}<div class="group">${rows.join("")}</div>`;
 
 LAYERS.settings = {
@@ -3905,10 +3942,10 @@ LAYERS.settings = {
         ${section("Cómo pueden interactuar contigo", [navRow("set-messages", "Mensajes", { everyone: "Todos", following: "Quien sigo", nobody: "Nadie" }[s.dmPolicy], "chat"), navRow("set-tags", "Etiquetas y menciones", "", "tag"), navRow("set-comments", "Comentarios y palabras ocultas", "", "comment"), navRow("set-restricted", "Restringidas", String(S.restricted.size), "shield"), navRow("set-muted", "Silenciadas", String(S.muted.size), "bell"), navRow("set-blocked", "Bloqueadas", String(S.blocked.size), "ban")])}
         ${section("Lo que ves", [navRow("set-topics", "Temas del feed", "", "sliders", "Más o menos de cada tipo de obra"), navRow("set-spoilers", "Spoilers", { unfinished: "Lo que no he terminado", always: "Siempre", never: "Nunca" }[s.spoilerMode], "eyeOff"), toggleRow("hideLikes", "Ocultar número de me gusta", "En las publicaciones de los demás", "heart")])}
         ${section("Tu app", [navRow("set-appearance", "Apariencia", PALETTES[m.theme].name, "palette", "Ambiente, letra y animaciones"), navRow("set-access", "Accesibilidad", "", "access", "Texto, movimiento, contraste y daltonismo"), navRow("set-language", "Idioma", "Español (México)", "globe"), navRow("set-data", "Datos y almacenamiento", "", "data", "Descargar tus datos y ahorro de datos")])}
-        ${section("Más información y ayuda", [navRow("set-help", "Ayuda", "", "help"), navRow("credits", "Créditos de datos y portadas", "", "info"), navRow("copyright", "Aviso de derechos de autor", "", "copyright"), actRow("noop-toast", "Términos y Aviso de Privacidad", "", "book", 'data-msg="Aquí abriremos los documentos legales"')])}
+        ${section("Más información y ayuda", [navRow("set-help", "Ayuda", "", "help"), navRow("credits", "Créditos de datos y portadas", "", "info"), navRow("copyright", "Aviso de derechos de autor", "", "copyright"), ...(BE.on ? [linkRow("aviso-de-privacidad.html", "Aviso de privacidad", "shield"), linkRow("terminos.html", "Términos", "book")] : [actRow("noop-toast", "Términos y Aviso de Privacidad", "", "book", 'data-msg="Aquí abriremos los documentos legales"')])])}
         ${section("Inicio de sesión", [actRow("logout", "Cerrar sesión", "", "logout"), actRow("delete-account", "Eliminar mi cuenta", "Se borra todo para siempre", "trash", "", "danger")])}
       </div>
-      <p class="xs muted center" style="margin:0">Bóveda · prototipo v3 · Hecho en Mérida</p>`);
+      <p class="xs muted center" style="margin:0">Bóveda · ${BE.on ? "beta" : "prototipo v3"} · Hecho en Mérida</p>`);
   },
 };
 
@@ -4713,6 +4750,7 @@ window.__bv = {
   theme(id) { S.me.theme = id; S.settings.theme = "profile"; applyTheme(); repaint(); },
   set(path, v) { setKey(path, v); applyA11y(); repaint(); },
   layers: () => STACK.map(e => e.type),
+  icon: n => ICON[n],
 };
 
 // ===== 12b_backend.js
@@ -4944,15 +4982,16 @@ async function beRestore() {
 // CATÁLOGO VIVO
 //  1. Búsqueda global: obras (y personas y clubes), con espera de 300 ms entre teclas,
 //     cancelación de búsquedas viejas, caché y filtro instantáneo por tipo de obra.
-//  2. Ficha de cada obra: sinopsis con "Leer más", calificaciones de varias fuentes y
-//     enlaces seguros para verla, leerla, escucharla o comprarla.
+//  2. Ficha de cada obra: sinopsis con "Leer más", calificación de Bóveda y de la fuente,
+//     IMDb y Rotten Tomatoes solo como enlace, y enlaces seguros (con el ícono de cada
+//     plataforma) para verla, leerla, escucharla o comprarla.
 //  3. Portadas oficiales verificadas (que existan, tamaño mínimo y proporción del
 //     tipo de obra) con la portada ilustrada como respaldo.
 //  4. Plantilla de ficha especial para libros (autor, editorial, páginas, ISBN…).
 //
 //  Fuentes sin clave: Open Library, MusicBrainz + Cover Art Archive, TVmaze, Wikipedia y
 //  Wikidata. Con la función "obras" de Supabase (las claves secretas viven allá):
-//  TMDB (películas), IGDB (videojuegos) y OMDb (IMDb y Rotten Tomatoes).
+//  TMDB (películas) e IGDB (videojuegos).
 //  En el prototipo (sin configuración) no se consulta nada de fuera.
 // =====================================================================
 const LIVE = !!(CFG.url && CFG.key);
@@ -5025,7 +5064,7 @@ async function getJSON(url, { signal, ms = 10000 } = {}) {
     throw e;
   } finally { clearTimeout(t); signal?.removeEventListener("abort", stop); release(); }
 }
-// Función "obras" en Supabase (TMDB, IGDB y OMDb con claves secretas). Sin ella, devuelve null.
+// Función "obras" en Supabase (TMDB e IGDB con claves secretas). Sin ella, devuelve null.
 async function callObras(body, signal) {
   if (!FN) return null;
   try {
@@ -5416,22 +5455,14 @@ async function wikiES(it, title) {
   }
   return null;
 }
-// Wikidata: identificador de IMDb y calificaciones publicadas (Rotten Tomatoes, Metacritic)
+// Wikidata: identificador de IMDb (para enlazar la ficha exacta) y artículos de Wikipedia
+const IMDB_RE = /^tt\d{5,10}$/;
 async function wikidata(qid) {
   const d = await getJSON(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=claims|sitelinks&ids=${encodeURIComponent(qid)}`);
   const e = d.entities?.[qid];
   if (!e) return null;
-  const val = p => e.claims?.[p]?.[0]?.mainsnak?.datavalue?.value;
-  const scores = {};
-  (e.claims?.P444 || []).forEach(c => {
-    const v = c.mainsnak?.datavalue?.value, by = c.qualifiers?.P447?.[0]?.datavalue?.value?.id;
-    const when = c.qualifiers?.P585?.[0]?.datavalue?.value?.time || "";
-    const k = { Q105584: "rt", Q37312: "imdb", Q150248: "mc" }[by];
-    if (!k || typeof v !== "string") return;
-    if (k === "rt" && !/%$/.test(v)) return;
-    if (!scores[k] || when > scores[k].when) scores[k] = { v, when: when.slice(1, 5) };
-  });
-  return { imdb: typeof val("P345") === "string" ? val("P345") : null, scores, eswiki: e.sitelinks?.eswiki?.title, enwiki: e.sitelinks?.enwiki?.title };
+  const imdb = e.claims?.P345?.[0]?.mainsnak?.datavalue?.value;
+  return { imdb: IMDB_RE.test(imdb || "") ? imdb : null, eswiki: e.sitelinks?.eswiki?.title, enwiki: e.sitelinks?.enwiki?.title };
 }
 const DETAIL = {
   async book(it) {
@@ -5509,19 +5540,14 @@ async function loadDetails(id) {
   // Sinopsis en español (Wikipedia) cuando existe; si no, la de la fuente
   try {
     const wd = d.qid ? await wikidata(d.qid) : null;
-    const wk = await wikiES(it, wd?.eswiki || null) || (wd ? null : null);
+    const wk = await wikiES(it, wd?.eswiki || null);
     if (wk) { d.synopsis = wk.text; d.synSrc = { name: "Wikipedia (CC BY-SA)", url: wk.url }; d.qid = d.qid || wk.qid; }
-    if ((it.cat === "movie" || it.cat === "tv") && d.qid) {
-      const w2 = wd || await wikidata(d.qid);
-      if (w2) { d.imdb = d.imdb || w2.imdb; d.wd = w2.scores; }
-    }
+    if ((it.cat === "movie" || it.cat === "tv") && d.qid && !d.imdb) d.imdb = (wd || await wikidata(d.qid))?.imdb || null;
   } catch (e) { /* sin Wikipedia: se queda la de la fuente */ }
   if (d.edCover && !it.img) {
     const ok = await verifyCover(it, d.edCover).catch(() => null);
     if (ok) { it.img = ok.u; it.fit = ok.f; store.set("cv:" + id, ok, 30); paintCover(id); saveCover(id, ok.u); }
   }
-  // IMDb y Rotten Tomatoes oficiales (OMDb, con clave en la función "obras")
-  if (FN && d.imdb && !d.omdb) d.omdb = (await callObras({ op: "ratings", imdb: d.imdb }).catch(() => null)) || null;
   DET.set(id, d);
   if (d.ok) store.set("det:" + id, d, 7);
   return d;
@@ -5540,24 +5566,42 @@ async function loadCommunity(id) {
 }
 
 const fmt = v => (v == null || v === "" ? null : String(v));
-function rateTile(src, value, scale, note, url, cls = "") {
-  const inner = `<span class="rt-src">${esc(src)}</span><span class="rt-val"><b>${esc(value ?? "—")}</b>${value != null && scale ? `<small>${esc(scale)}</small>` : ""}</span><span class="rt-note">${esc(note || "")}</span>`;
-  return url ? `<a class="rate-tile ${cls}" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(src)}: ${esc(value ?? "sin dato")}${scale && value != null ? " " + esc(scale) : ""}. Abrir en ${esc(src)}">${inner}</a>`
-    : `<div class="rate-tile ${cls}">${inner}</div>`;
+
+// Ícono de cada plataforma: su propio favicon, tal cual lo publica (no redibujamos logotipos), a 64 px
+// con el servicio de íconos de Google (el mismo proveedor de las tipografías: no suma terceros).
+// Sin conexión, en el prototipo o si no carga: la inicial del nombre.
+const FAV_HOST = { "open.spotify.com": "spotify.com", "store.steampowered.com": "steampowered.com", "store.playstation.com": "playstation.com" };
+function favURL(url) {
+  try { const h = new URL(url).hostname.replace(/^www\./, ""); return `https://www.google.com/s2/favicons?domain=${FAV_HOST[h] || h}&sz=64`; } catch (e) { return null; }
 }
+function brandMark(name, src, cls = "") {
+  const ini = (String(name).match(/[\p{L}\p{N}]/u) || ["·"])[0].toUpperCase();
+  const img = LIVE && src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : "";
+  return `<span class="brand${cls ? " " + cls : ""}${img ? "" : " no-img"}" aria-hidden="true"><span class="brand-ini">${esc(ini)}</span>${img}</span>`;
+}
+document.addEventListener("error", e => {
+  const t = e.target, b = t?.parentNode;
+  if (t?.tagName === "IMG" && b?.classList?.contains("brand")) { b.classList.add("no-img"); t.remove(); }
+}, true);
+const NEW_TAB = `<span class="sr"> (se abre en otra pestaña)</span>`;
+
+// Calificaciones: la de Bóveda y la que publica la propia fuente de los datos (Open Library, TVmaze, TMDB o IGDB).
+// IMDb y Rotten Tomatoes solo como enlace: no copiamos sus calificaciones.
+function rateCell(src, value, scale, note, url, cls = "") {
+  const inner = `<span class="rt-src">${esc(src)}</span><span class="rt-val"><b>${esc(value ?? "—")}</b>${value != null && scale ? `<small>${esc(scale)}</small>` : ""}</span><span class="rt-note">${esc(note || "")}</span>`;
+  return url ? `<a class="rate-cell ${cls}" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${inner}${NEW_TAB}</a>` : `<div class="rate-cell ${cls}">${inner}</div>`;
+}
+const extChip = (name, url, label) => `<a class="ext-chip" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${brandMark(name, favURL(url), "sm")}<span>${esc(label)}</span>${icon("external", 16)}${NEW_TAB}</a>`;
 function ratingsHTML(it, d) {
   const cm = COMM.get(it.id);
-  const tiles = [rateTile("Bóveda", cm ? (cm.avg != null ? cm.avg.toFixed(1) : null) : "…", "/10", cm ? (cm.count ? plural(cm.count, "voto", "votos") : "Sin votos todavía") : "Cargando", null, "rt-boveda")];
+  const cells = [rateCell("Bóveda", cm ? (cm.avg != null ? cm.avg.toFixed(1) : null) : "…", "/10", cm ? (cm.count ? plural(cm.count, "voto", "votos") : "Sin votos todavía") : "Cargando", null, "rc-boveda")];
+  (d?.extra || []).forEach(r => cells.push(rateCell(r.src, r.value, r.scale, r.count ? plural(r.count, "voto", "votos") : "", r.url)));
+  let links = "";
   if (it.cat === "movie" || it.cat === "tv") {
-    const imdbUrl = d?.imdb ? `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/` : `https://www.imdb.com/find/?q=${encodeURIComponent(it.title)}`;
-    const rtUrl = `https://www.rottentomatoes.com/search?search=${encodeURIComponent(it.title)}`;
-    const im = d?.omdb?.imdb ? { v: d.omdb.imdb, n: d.omdb.imdbVotes ? `${d.omdb.imdbVotes} votos` : "IMDb" } : d?.wd?.imdb ? { v: d.wd.imdb.v.replace(/\/10$/, ""), n: `Vía Wikidata${d.wd.imdb.when ? " · " + d.wd.imdb.when : ""}` } : null;
-    const rt = d?.omdb?.rt ? { v: d.omdb.rt, n: "Tomatometer" } : d?.wd?.rt ? { v: d.wd.rt.v, n: `Vía Wikidata${d.wd.rt.when ? " · " + d.wd.rt.when : ""}` } : null;
-    tiles.push(rateTile("IMDb", im?.v ?? null, "/10", im?.n || (d || !LIVE ? "Ver en IMDb" : "Cargando"), imdbUrl, "rt-imdb"));
-    tiles.push(rateTile("Rotten Tomatoes", rt?.v ?? null, "", rt?.n || (d || !LIVE ? "Ver en Rotten Tomatoes" : "Cargando"), rtUrl, "rt-rotten"));
+    const imdb = IMDB_RE.test(d?.imdb || "") ? `https://www.imdb.com/title/${d.imdb}/` : `https://www.imdb.com/find/?q=${encodeURIComponent(it.title)}`;
+    links = `<div class="rate-links" role="group" aria-label="Calificaciones en otros sitios">${extChip("IMDb", imdb, "IMDb")}${extChip("Rotten Tomatoes", `https://www.rottentomatoes.com/search?search=${encodeURIComponent(it.title)}`, "Rotten Tomatoes")}</div>`;
   }
-  (d?.extra || []).forEach(r => tiles.push(rateTile(r.src, r.value, r.scale, r.count ? plural(r.count, "voto", "votos") : "", r.url)));
-  return `<section class="v-section" aria-labelledby="v-rate-t"><span class="eyebrow" id="v-rate-t">Calificaciones</span><div class="rate-grid">${tiles.join("")}</div></section>`;
+  return `<section class="v-section" aria-labelledby="v-rate-t"><span class="eyebrow" id="v-rate-t">Calificaciones</span><div class="rate-strip">${cells.join("")}</div>${links}</section>`;
 }
 function synopsisHTML(it, d) {
   if (!LIVE) return "";
@@ -5567,19 +5611,22 @@ function synopsisHTML(it, d) {
   return `<section class="v-section" aria-labelledby="v-syn-t"><span class="eyebrow" id="v-syn-t">Sinopsis</span>
     <p class="syn${long ? " clamp" : ""}" id="v-syn">${esc(d.synopsis)}</p>
     ${long ? `<button class="link-btn syn-more" data-act="syn-toggle" type="button" aria-expanded="false" aria-controls="v-syn">Leer más</button>` : ""}
-    ${d.synSrc ? `<span class="xs muted">Fuente: <a href="${esc(d.synSrc.url)}" target="_blank" rel="noopener noreferrer">${esc(d.synSrc.name)}</a></span>` : ""}
+    ${d.synSrc ? `<span class="xs muted v-src">Fuente: <a href="${esc(d.synSrc.url)}" target="_blank" rel="noopener noreferrer">${esc(d.synSrc.name)}${NEW_TAB}</a></span>` : ""}
   </section>`;
 }
-const factCell = ([k, v], wide) => `<div class="fact${wide ? " fact-wide" : ""}"><dt>${esc(k)}</dt><dd${k === "ISBN" ? ' class="mono"' : ""}>${esc(String(v))}</dd></div>`;
+// Ficha técnica: renglones con línea fina (etiqueta a la izquierda, dato a la derecha)
+const factRow = ([k, v]) => `<div class="fact"><dt>${esc(k)}</dt><dd${k === "ISBN" ? ' class="mono"' : ""}>${esc(String(v))}</dd></div>`;
 // Plantilla dedicada para libros
 function bookSheetHTML(it, d) {
   const b = d?.book || { author: it.creator, firstYear: it.year };
   const F = [["Autor", b.author], ["Editorial", b.publisher], ["Primera publicación", b.firstYear], ["Esta edición", b.editionYear], ["Páginas", b.pages], ["Idioma", b.lang], ["ISBN", b.isbn], ["Ediciones", b.editions]].filter(f => fmt(f[1]));
   const lead = [b.pages && plural(+b.pages, "página", "páginas"), b.publisher, b.lang].filter(Boolean).join(" · ");
-  return `<section class="book-sheet" aria-labelledby="v-book-t">
-    <div class="bs-head"><span class="eyebrow" id="v-book-t">Ficha del libro</span>${lead ? `<span class="bs-lead">${esc(lead)}</span>` : ""}</div>
-    <dl class="facts facts-book">${F.map(f => factCell(f, f[0] === "ISBN" || f[0] === "Autor")).join("")}</dl>
-    ${b.subjects?.length ? `<div class="bs-tags" aria-label="Temas">${b.subjects.map(s => `<span class="chip static">${esc(s)}</span>`).join("")}</div>` : ""}
+  return `<section class="v-section" aria-labelledby="v-book-t"><span class="eyebrow" id="v-book-t">Ficha del libro</span>
+    <div class="spec book-sheet">
+      ${lead ? `<p class="bs-lead">${esc(lead)}</p>` : ""}
+      <dl class="facts">${F.map(factRow).join("")}</dl>
+      ${b.subjects?.length ? `<div class="bs-tags" aria-label="Temas">${b.subjects.map(s => `<span class="chip static">${esc(s)}</span>`).join("")}</div>` : ""}
+    </div>
     ${d?.book ? `<span class="xs muted">Edición de referencia según Open Library${b.lang === "Español" ? " (en español)" : ""}.</span>` : LIVE && !d ? `<span class="skel ln short"></span>` : ""}
   </section>`;
 }
@@ -5587,21 +5634,23 @@ function factsHTML(it, d) {
   const who = { album: "Artista", movie: "Dirección", tv: "Cadena", game: "Estudio", book: "Autor" }[it.cat];
   const F = (d?.facts || [[who, it.creator], ["Año", it.year]]).filter(f => fmt(f[1]));
   if (!F.length) return "";
-  return `<section class="v-section" aria-labelledby="v-facts-t"><span class="eyebrow" id="v-facts-t">Ficha técnica</span><dl class="facts">${F.map(f => factCell(f)).join("")}</dl></section>`;
+  return `<section class="v-section" aria-labelledby="v-facts-t"><span class="eyebrow" id="v-facts-t">Ficha técnica</span><dl class="spec facts">${F.map(factRow).join("")}</dl></section>`;
 }
+// Dónde verla, leerla, escucharla o comprarla: [nombre, enlace, qué ofrece, logotipo (si la fuente lo da)]
 function whereLinks(it, d) {
   const t = encodeURIComponent(it.title), ta = encodeURIComponent(`${it.title} ${it.creator || ""}`.trim());
+  const jw = ["JustWatch", `https://www.justwatch.com/mx/buscar?q=${t}`, "Todas las plataformas"];
   const L = {
     book: [["Amazon México", `https://www.amazon.com.mx/s?k=${ta}&i=stripbooks`, "Comprar"], ["Gandhi", `https://www.gandhi.com.mx/catalogsearch/result/?q=${ta}`, "Comprar"], ["Open Library", d?.synSrc?.name === "Open Library" ? d.synSrc.url : `https://openlibrary.org/search?q=${ta}`, "Leer o pedir prestado"]],
     album: [["Spotify", `https://open.spotify.com/search/${ta}`, "Escuchar"], ["Apple Music", `https://music.apple.com/mx/search?term=${ta}`, "Escuchar"], ["YouTube Music", `https://music.youtube.com/search?q=${ta}`, "Escuchar"]],
-    movie: [...(d?.providers || []).map(p => [p.name, p.url, p.kind]), ["JustWatch", `https://www.justwatch.com/mx/buscar?q=${t}`, "Dónde verla"], d?.imdb && ["IMDb", `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/`, "Ficha completa"]],
-    tv: [d?.official && ["Sitio oficial", d.official, "Ver"], ["JustWatch", `https://www.justwatch.com/mx/buscar?q=${t}`, "Dónde verla"], d?.imdb && ["IMDb", `https://www.imdb.com/title/${encodeURIComponent(d.imdb)}/`, "Ficha completa"]],
+    movie: [...(d?.providers || []).map(p => [p.name, p.url, p.kind, /^https:\/\/image\.tmdb\.org\//.test(p.logo || "") ? p.logo : null]), jw],
+    tv: [d?.official && ["Sitio oficial", d.official, "Ver la serie"], jw],
     game: [["Steam", `https://store.steampowered.com/search/?term=${t}`, "Comprar"], ["Nintendo eShop", `https://www.nintendo.com/es-mx/search/#q=${t}`, "Comprar"], ["PlayStation Store", `https://store.playstation.com/es-mx/search/${t}`, "Comprar"], ["Xbox", `https://www.xbox.com/es-MX/search/results?q=${t}`, "Comprar"]],
   }[it.cat].filter(Boolean).filter(l => /^https:\/\//.test(l[1]));
   const verb = { book: "Dónde leerlo o comprarlo", album: "Dónde escucharlo", movie: "Dónde verla", tv: "Dónde verla", game: "Dónde jugarlo" }[it.cat];
   return `<section class="v-section" id="v-where" aria-labelledby="v-where-t"><span class="eyebrow" id="v-where-t">${verb}</span>
-    <div class="where-grid">${L.map(([name, url, kind]) => `<a class="where-btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><span class="grow"><b>${esc(name)}</b><span>${esc(kind)}</span></span>${icon("share", 18)}</a>`).join("")}</div>
-    <span class="xs muted">Abre el sitio de cada plataforma. Bóveda no vende ni cobra por estos enlaces.</span>
+    <div class="spec where-list">${L.map(([name, url, kind, img]) => `<a class="where-row" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${brandMark(name, img === undefined ? favURL(url) : img)}<span class="grow"><b>${esc(name)}</b><span>${esc(kind)}</span></span>${icon("external", 18)}${NEW_TAB}</a>`).join("")}</div>
+    <span class="xs muted">Cada enlace abre el sitio de la plataforma. Bóveda no vende ni cobra por estos enlaces.</span>
   </section>`;
 }
 function liveInfoHTML(id) {
