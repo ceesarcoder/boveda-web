@@ -16,7 +16,7 @@
 <meta name="theme-color" content="#0A0A12" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,800&family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="preload" href="app.c1ac94e565.bin" as="fetch" crossorigin>
+<link rel="preload" href="app.ea7f4e755e.bin" as="fetch" crossorigin>
 <style>
 /* Mismos colores que los ambientes Arcilla (claro) y Medianoche (oscuro) de la app */
 :root { --bg: #F6F1E9; --surface: #FFFCF7; --surface-2: #F1EADF; --line: #E0D5C6; --fg: #1F1A15; --muted: #5B5045;
@@ -122,11 +122,11 @@ footer a { color: var(--muted); font-weight: 500; }
   <p class="note">Bóveda está en prueba con personas invitadas. Hecho en Mérida.</p>
   <footer><a href="aviso-de-privacidad.html">Aviso de privacidad</a><a href="terminos.html">Términos</a><a href="borrar-cuenta.html">Borrar mi cuenta</a></footer>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" crossorigin="anonymous"></script>
 <script type="module">
-// Página pública: lo único que ve quien no tiene acceso. La app viaja cifrada en app.c1ac94e565.bin y solo
+// Página pública: lo único que ve quien no tiene acceso. La app viaja cifrada en app.ea7f4e755e.bin y solo
 // se abre con la llave que la base entrega a cuentas con acceso (archivo 08). Nada de la app vive aquí.
-const CFG = {"url": "https://janguhfxpnabszyagmqe.supabase.co", "key": "sb_publishable_Q58EO0HP9-9qVrrs4rRB1g_R01p9l7w"}, BUNDLE = "app.c1ac94e565.bin", LLAVE = "bv-llave";
+const CFG = {"url": "https://janguhfxpnabszyagmqe.supabase.co", "key": "sb_publishable_Q58EO0HP9-9qVrrs4rRB1g_R01p9l7w"}, BUNDLE = "app.ea7f4e755e.bin", LLAVE = "bv-llave";
 const $ = s => document.querySelector(s);
 const sb = window.supabase?.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
 const show = id => { for (const s of ["st-wait", "st-forms", "st-noaccess", "st-pending"]) $("#" + s).hidden = s !== id; };
@@ -237,6 +237,9 @@ $("#f-canje").addEventListener("submit", async ev => {
 const salir = async () => { await sb.auth.signOut(); show("st-forms"); tab(false); };
 $("#c-salir").addEventListener("click", salir);
 $("#p-salir").addEventListener("click", salir);
+
+// Visitas siguientes al instante y sin internet (sw.js guarda solo archivos fijos)
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
 // Al abrir: si ya entraste en este teléfono, directo a tu Bóveda
 const inv = new URLSearchParams(location.search).get("invitacion");
